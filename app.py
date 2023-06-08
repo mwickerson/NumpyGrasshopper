@@ -778,7 +778,7 @@ def identity_02(n: int):
 #signed intger types means that the number can be positive or negative
 #unsigned integer types means that the number can only be positive
 
-#conberting or casting an array from one dtype to another
+#converting or casting an array from one dtype to another
 #write into a @hops component
 @hops.component(
     "/numpy_casting",
@@ -4106,13 +4106,2546 @@ def ndarray_random_walk_02(nwalks: int, nsteps: int):
 
 #conclusion
 #numpy is the foundation on which many important Python data science libraries are built
+
 #pandas, scipy, scikit-learn, statsmodels, and many others
+
 #numpy is fast, easy to use, and provides a standard API that enables you to
 # quickly develop efficient algorithms using high-level mathematical functions
 #numpy arrays are like Python lists, but they are homogeneous and typed
 #numpy arrays are memory efficient and fast to operate on
 #numpy provides a large library of high-level mathematical functions that operate on arrays
 #numpy arrays can be sliced, masked, and iterated on
+
+"""
+ █████╗ ██████╗ ██╗   ██╗ █████╗ ███╗   ██╗ ██████╗███████╗██████╗ 
+██╔══██╗██╔══██╗██║   ██║██╔══██╗████╗  ██║██╔════╝██╔════╝██╔══██╗
+███████║██║  ██║██║   ██║███████║██╔██╗ ██║██║     █████╗  ██║  ██║
+██╔══██║██║  ██║╚██╗ ██╔╝██╔══██║██║╚██╗██║██║     ██╔══╝  ██║  ██║
+██║  ██║██████╔╝ ╚████╔╝ ██║  ██║██║ ╚████║╚██████╗███████╗██████╔╝
+╚═╝  ╚═╝╚═════╝   ╚═══╝  ╚═╝  ╚═╝╚═╝  ╚═══╝ ╚═════╝╚══════╝╚═════╝ 
+                                                                   
+███╗   ██╗██╗   ██╗███╗   ███╗██████╗ ██╗   ██╗                    
+████╗  ██║██║   ██║████╗ ████║██╔══██╗╚██╗ ██╔╝                    
+██╔██╗ ██║██║   ██║██╔████╔██║██████╔╝ ╚████╔╝                     
+██║╚██╗██║██║   ██║██║╚██╔╝██║██╔═══╝   ╚██╔╝                      
+██║ ╚████║╚██████╔╝██║ ╚═╝ ██║██║        ██║                       
+╚═╝  ╚═══╝ ╚═════╝ ╚═╝     ╚═╝╚═╝        ╚═╝  
+"""
+#Advanced NumPy
+#ndarray object internals
+rng = np.random.default_rng(12345)
+
+#ndarray is a generic multidimensional container for homogeneous data 
+# (either all integers, floats, or strings) or a mixture of different types
+#dtype is a special object containing the information (or metadata, data about data)
+#striding is the number of bytes to step in each dimension when traversing the array
+#ndim is the number of dimensions
+#this does not copy any data, it just creates a new view of the original array
+#the data is not copied, and any modifications to the view will be reflected in the source array
+#the transpose method, like most numpy functions, returns a view instead of a copy whenever possible
+#the copy method makes a complete copy of the array and its data
+
+#the ndarray consists of:
+#a pointer to data, a block of memory, keeping track of the start of the array data 
+#a data type or dtype, describing fixed-size value cells in the array
+#a shape, a tuple indicating the size of each dimension
+#a strides, a tuple indicating the number of bytes to step in each dimension when traversing the array
+
+#for example a 3x4x5 float64 array would have shape (3, 4, 5) and dtype float64
+#it would have 3*4*5*8 bytes of data, and more bytes for the other information in the ndarray object
+#it would have strides (160, 40, 8) indicating the number of bytes to step in each dimension when traversing the array
+#the strides are computed from the shape of the array by multiplying the number of bytes per cell by the number of cells to step in each direction
+#strides can be negative, indicating that the array is traversed backwards
+
+#write this into a @hops component
+@hops.component(
+    "/ndarray_strides_02",
+    name="ndarray_strides",
+    nickname="ndarray_strides",
+    description="ndarray_strides",
+    inputs = [
+        hs.HopsInteger("rows", "rows", "rows", access = hs.HopsParamAccess.ITEM),
+        hs.HopsInteger("columns", "columns", "columns", access = hs.HopsParamAccess.ITEM),
+        hs.HopsInteger("depth", "depth", "depth", access = hs.HopsParamAccess.ITEM)
+        ],
+    outputs = [
+        hs.HopsNumber("strides", "strides", "strides", access = hs.HopsParamAccess.ITEM)
+        ]
+)
+def ndarray_strides_02(rows: int, columns: int, depth: int):
+    X = rng.standard_normal((rows, columns, depth))
+    print(X)
+    strides = X.strides
+    return strides 
+
+#Numpy Data Type Hierarchy
+#superclasses of numpy data types
+#np.integer
+#np.floating
+#np.complexfloating
+#np.bool
+#np.character
+#np.flexible
+#np.datetime64
+#np.timedelta64
+#np.void
+
+#np.issubtype is a safe way to check whether one dtype is a subclass of another
+ints = np.ones(10, dtype=np.uint16)
+floats = np.ones(10, dtype=np.float32)
+print(np.issubdtype(ints.dtype, np.integer))
+print(np.issubdtype(floats.dtype, np.floating))
+
+#write this into a @hops component
+@hops.component(
+    "/ndarray_issubdtype_01",
+    name="ndarray_issubdtype",
+    nickname="ndarray_issubdtype",
+    description="ndarray_issubdtype",
+    inputs = [
+        hs.HopsInteger("ints", "ints", "ints", access = hs.HopsParamAccess.LIST),
+        hs.HopsInteger("floats", "floats", "floats", access = hs.HopsParamAccess.LIST)
+        ],
+    outputs = [
+        hs.HopsBoolean("ints", "ints", "ints", access = hs.HopsParamAccess.ITEM),
+        hs.HopsBoolean("floats", "floats", "floats", access = hs.HopsParamAccess.ITEM)
+        ]
+)
+def ndarray_issubdtype_01(ints: int, floats: float):
+    ints = np.ones(10, dtype=np.uint16)
+    floats = np.ones(10, dtype=np.float32)
+    ints = np.issubdtype(ints.dtype, np.integer)
+    floats = np.issubdtype(floats.dtype, np.floating)
+    return ints, floats
+
+#mro method returns a tuple of types that the class is derived from in order 
+# from base to subclass
+print(np.float64.mro())
+print(np.int32.mro())
+#therefore , we also have
+print(np.issubdtype(np.float64, np.floating))
+
+#write this into a @hops component
+@hops.component(
+    "/ndarray_mro_01",
+    name="ndarray_mro",
+    nickname="ndarray_mro",
+    description="ndarray_mro",
+    inputs = [
+        hs.HopsInteger("float64", "float64", "float64", access = hs.HopsParamAccess.LIST),
+        hs.HopsInteger("int32", "int32", "int32", access = hs.HopsParamAccess.LIST)
+        ],
+    outputs = [
+        hs.HopsString("float64", "float64", "float64", access = hs.HopsParamAccess.ITEM),
+        hs.HopsString("int32", "int32", "int32", access = hs.HopsParamAccess.ITEM)
+        ]
+)
+def ndarray_mro_01(float64: float, int32: int):
+    float64 = np.float64.mro()
+    int32 = np.int32.mro()
+    return str(float64), str(int32)
+
+
+#Advanced Array Manipulation
+#there are many ways to manipulate the data within arrays beyond indexing, slicing, and masking
+#fancy indexing, and boolean upsetting
+
+#Reshape Arrays
+#reshape method returns a new ndarray object pointing at the same data
+#to change a 3x4 array to a 4x3 array, you can pass the shape tuple to reshape
+arr = np.arange(8)
+print(arr)
+print(arr.reshape((4, 2)))
+print(arr.reshape((4, 2)).reshape((2, 4)))
+
+#write this into a @hops component
+@hops.component(
+    "/ndarray_reshape_02",
+    name="ndarray_reshape",
+    nickname="ndarray_reshape",
+    description="ndarray_reshape",
+    inputs = [
+        hs.HopsInteger("rows", "rows", "rows", access = hs.HopsParamAccess.ITEM),
+        hs.HopsInteger("columns", "columns", "columns", access = hs.HopsParamAccess.ITEM)
+        ],
+    outputs = [
+        hs.HopsNumber("arrList1", "arrList1", "arrList1", access = hs.HopsParamAccess.LIST),
+        hs.HopsNumber("arrList2", "arrList2", "arrList2", access = hs.HopsParamAccess.LIST),
+        hs.HopsNumber("arrList3", "arrList3", "arrList3", access = hs.HopsParamAccess.LIST),
+        hs.HopsNumber("arrList4", "arrList4", "arrList4", access = hs.HopsParamAccess.LIST)
+        ]
+)
+def ndarray_reshape_02(rows: int, columns: int):
+    arr = np.arange(rows * columns)
+    print(arr)
+    arrReshaped = arr.reshape((rows, columns))
+    print(arrReshaped)
+    return arrReshaped.tolist()[0], arrReshaped.tolist()[1], arrReshaped.tolist()[2], arrReshaped.tolist()[3]
+
+#write this into a @hops component
+@hops.component(
+    "/ndarray_reshape_03",
+    name="ndarray_reshape",
+    nickname="ndarray_reshape",
+    description="ndarray_reshape",
+    inputs = [
+        hs.HopsInteger("list1", "list1", "list1", access = hs.HopsParamAccess.LIST),
+        hs.HopsInteger("rows", "rows", "rows", access = hs.HopsParamAccess.ITEM),
+        hs.HopsInteger("columns", "columns", "columns", access = hs.HopsParamAccess.ITEM)
+        ],
+    outputs = [
+        hs.HopsNumber("arrList1", "arrList1", "arrList1", access = hs.HopsParamAccess.LIST),
+        hs.HopsNumber("arrList2", "arrList2", "arrList2", access = hs.HopsParamAccess.LIST),
+        hs.HopsNumber("arrList3", "arrList3", "arrList3", access = hs.HopsParamAccess.LIST),
+        hs.HopsNumber("arrList4", "arrList4", "arrList4", access = hs.HopsParamAccess.LIST)
+        ]
+)
+def ndarray_reshape_03(list1: int, rows: int, columns: int):
+    arr = np.array(list1)
+    print(arr)
+    arrReshaped = arr.reshape((rows, columns))
+    print(arrReshaped)
+    return arrReshaped.tolist()[0], arrReshaped.tolist()[1], arrReshaped.tolist()[2], arrReshaped.tolist()[3]
+
+#a multidimensional array can also be reshaped
+#the only requirement is that the size of the initial array matches the size of the reshaped array
+#the reshape method can also be called directly as a function
+#the following are equivalent
+arr = np.arange(8).reshape((4, 2))
+print(arr)
+print(np.reshape(np.arange(8), (4, 2)))
+
+#write this into a @hops component
+@hops.component(
+    "/ndarray_reshape_04",
+    name="ndarray_reshape",
+    nickname="ndarray_reshape",
+    description="ndarray_reshape",
+    #icon = "images/ndarray_reshape.png",
+    inputs = [
+        hs.HopsInteger("rows", "rows", "rows", access = hs.HopsParamAccess.ITEM),
+        hs.HopsInteger("columns", "columns", "columns", access = hs.HopsParamAccess.ITEM)
+        ],
+    outputs = [
+        hs.HopsNumber("arrList1", "arrList1", "arrList1", access = hs.HopsParamAccess.LIST),
+        hs.HopsNumber("arrList2", "arrList2", "arrList2", access = hs.HopsParamAccess.LIST),
+        hs.HopsNumber("arrList3", "arrList3", "arrList3", access = hs.HopsParamAccess.LIST),
+        hs.HopsNumber("arrList4", "arrList4", "arrList4", access = hs.HopsParamAccess.LIST)
+        ]
+)
+def ndarray_reshape_04(rows: int, columns: int):
+    arr = np.arange(rows * columns).reshape((rows, columns))
+    print(arr)
+    return arr.tolist()[0], arr.tolist()[1], arr.tolist()[2], arr.tolist()[3]
+
+
+#the opposite operation of reshape from one-dimensional to a higher dimension is typically known as flattening or raveling
+#flatten returns a copy of the data in a one-dimensional array
+#the -1 value in a reshape operation means to automatically compute the size of the dimension
+arr = np.arange(15).reshape((5, 3))
+print(arr)
+print(arr.ravel())
+print(arr.ravel().reshape((5, 3)))
+print(arr.ravel().reshape((5, -1)))
+
+#example of raveling
+#write this into a @hops component
+@hops.component(
+    "/ndarray_ravel_02",
+    name="ndarray_ravel",
+    nickname="ndarray_ravel",
+    description="ndarray_ravel",
+    inputs = [
+        hs.HopsInteger("rows", "rows", "rows", access = hs.HopsParamAccess.ITEM),
+        hs.HopsInteger("columns", "columns", "columns", access = hs.HopsParamAccess.ITEM)
+        ],
+    outputs = [
+        hs.HopsNumber("List1", "List1", "List1", access = hs.HopsParamAccess.LIST),
+        ]
+)
+def ndarray_ravel_02(rows: int, columns: int):
+    arr = np.arange(rows * columns).reshape((rows, columns))
+    print(arr)
+    arrRaveled = arr.ravel()
+    print(arrRaveled)
+    return arrRaveled.tolist()
+
+#example of flattening
+#write this into a @hops component
+@hops.component(
+    "/ndarray_flatten_01",
+    name="ndarray_flatten",
+    nickname="ndarray_flatten",
+    description="ndarray_flatten",
+    inputs = [
+        hs.HopsInteger("rows", "rows", "rows", access = hs.HopsParamAccess.ITEM),
+        hs.HopsInteger("columns", "columns", "columns", access = hs.HopsParamAccess.ITEM)
+        ],
+    outputs = [
+        hs.HopsNumber("List1", "List1", "List1", access = hs.HopsParamAccess.LIST),
+        ]
+)
+def ndarray_flatten_01(rows: int, columns: int):
+    arr = np.arange(rows * columns).reshape((rows, columns))
+    print(arr)
+    arrFlattened = arr.flatten()
+    print(arrFlattened)
+    return arrFlattened.tolist()
+
+#C Versus Fortran Order
+#when multidimensional data is stored in a one-dimensional block of memory, 
+#there is a choice about how to interpret the data as a multidimensional array
+#the order= keyword argument can be used to specify whether the array should 
+# be stored in row-major order (C) or column-major order (Fortran)
+#the default is row-major order
+arr = np.arange(12).reshape((3, 4))
+print(arr)
+print(arr.ravel())
+print(arr.ravel('F'))
+
+#reshaping higher dimensional arrays also follows the same ordering
+#but it can be a bit more confusing
+#C/row major order means that the last axis index varies the fastest, 
+# and the first index the slowest
+#e.g. axis 1 before advancing on axis 0
+#Fortran/column major order means that the first index varies the fastest,
+# and the last index the slowest
+#e.g. axis 0 before advancing on axis 1
+arr = np.arange(12).reshape((3, 4))
+print(arr)
+print(arr.ravel())
+print(arr.ravel('F'))
+print(arr.reshape((3, 4), order='F'))
+print(arr.reshape((3, 4), order='C'))
+print(arr.reshape((4, 3), order='F'))
+print(arr.reshape((4, 3), order='C'))
+
+#write this into a @hops component
+@hops.component(
+    "/ndarray_reshape_02",
+    name="ndarray_reshape", 
+    nickname="ndarray_reshape",
+    description="ndarray_reshape",
+    inputs = [
+        hs.HopsInteger("list1", "list1", "list1", access = hs.HopsParamAccess.LIST),
+        hs.HopsInteger("rows", "rows", "rows", access = hs.HopsParamAccess.ITEM),
+        hs.HopsInteger("columns", "columns", "columns", access = hs.HopsParamAccess.ITEM)
+        ],
+    outputs = [
+        hs.HopsNumber("arrList1", "arrList1", "arrList1", access = hs.HopsParamAccess.LIST),
+        hs.HopsNumber("arrList2", "arrList2", "arrList2", access = hs.HopsParamAccess.LIST),
+        hs.HopsNumber("arrList3", "arrList3", "arrList3", access = hs.HopsParamAccess.LIST),
+        hs.HopsNumber("arrList4", "arrList4", "arrList4", access = hs.HopsParamAccess.LIST)
+        ]
+)
+def ndarray_reshape_02(list1: int, rows: int, columns: int):
+    arr = np.array(list1).reshape((rows, columns))
+    print(arr)
+    arrReshaped = arr.reshape((rows, columns), order='F')
+    print(arrReshaped)
+    return arrReshaped.tolist()[0], arrReshaped.tolist()[1], arrReshaped.tolist()[2], arrReshaped.tolist()[3]
+
+#Concatenate and Splitting Arrays
+#numpy.concatenate takes a sequence (tuple, list, etc.) 
+#of arrays and joins them together in order along the input axis
+arr1 = np.array([[1, 2, 3], [4, 5, 6]])
+arr2 = np.array([[7, 8, 9], [10, 11, 12]])
+print(np.concatenate([arr1, arr2], axis=0))
+print(np.concatenate([arr1, arr2], axis=1))
+
+#write this into a @hops component
+@hops.component(
+    "/ndarray_concatenate_02",
+    name="ndarray_concatenate",
+    nickname="ndarray_concatenate",
+    description="ndarray_concatenate",
+    inputs = [
+        hs.HopsInteger("list1", "list1", "list1", access = hs.HopsParamAccess.LIST),
+        hs.HopsInteger("list2", "list2", "list2", access = hs.HopsParamAccess.LIST),
+        hs.HopsInteger("list3", "list3", "list3", access = hs.HopsParamAccess.LIST),
+        hs.HopsInteger("list4", "list4", "list4", access = hs.HopsParamAccess.LIST)
+        ],
+    outputs = [
+        hs.HopsNumber("arrList1", "arrList1", "arrList1", access = hs.HopsParamAccess.LIST),
+        hs.HopsNumber("arrList2", "arrList2", "arrList2", access = hs.HopsParamAccess.LIST),
+        hs.HopsNumber("arrList3", "arrList3", "arrList3", access = hs.HopsParamAccess.LIST),
+        hs.HopsNumber("arrList4", "arrList4", "arrList4", access = hs.HopsParamAccess.LIST)
+        ]   
+)
+def ndarray_concatenate_01(list1: int, list2: int, list3: int, list4: int):
+    arr1 = np.array([list1, list2])
+    arr2 = np.array([list3, list4])
+    print(arr1)
+    print(arr2)
+    arrConcatenated = np.concatenate([arr1, arr2], axis=0)
+    print(arrConcatenated)
+    return arrConcatenated.tolist()[0], arrConcatenated.tolist()[1], arrConcatenated.tolist()[2], arrConcatenated.tolist()[3]
+
+#write this into a @hops component
+@hops.component(
+    "/ndarray_concatenate_03",
+    name="ndarray_concatenate",
+    nickname="ndarray_concatenate",
+    description="ndarray_concatenate",
+    inputs = [
+        hs.HopsInteger("list1", "list1", "list1", access = hs.HopsParamAccess.LIST),
+        hs.HopsInteger("list2", "list2", "list2", access = hs.HopsParamAccess.LIST),
+        hs.HopsInteger("list3", "list3", "list3", access = hs.HopsParamAccess.LIST),
+        hs.HopsInteger("list4", "list4", "list4", access = hs.HopsParamAccess.LIST)
+        ],
+    outputs = [
+        hs.HopsNumber("arrList1", "arrList1", "arrList1", access = hs.HopsParamAccess.LIST),
+        hs.HopsNumber("arrList2", "arrList2", "arrList2", access = hs.HopsParamAccess.LIST)
+        ]
+)
+def ndarray_concatenate_02(list1: int, list2: int, list3: int, list4: int):
+    arr1 = np.array([list1, list2])
+    arr2 = np.array([list3, list4])
+    print(arr1)
+    print(arr2)
+    arrConcatenated = np.concatenate([arr1, arr2], axis=1)
+    print(arrConcatenated)
+    return arrConcatenated.tolist()[0], arrConcatenated.tolist()[1]
+
+#vstack and hstack are shortcuts for 
+# vertical and horizontal concatenation, respectively
+print(np.vstack((arr1, arr2)))
+print(np.hstack((arr1, arr2)))
+
+#write this into a @hops component  
+@hops.component(
+    "/ndarray_vstack_01",
+    name="ndarray_vstack",
+    nickname="ndarray_vstack",
+    description="ndarray_vstack",
+    inputs = [
+        hs.HopsInteger("list1", "list1", "list1", access = hs.HopsParamAccess.LIST),
+        hs.HopsInteger("list2", "list2", "list2", access = hs.HopsParamAccess.LIST),
+        hs.HopsInteger("list3", "list3", "list3", access = hs.HopsParamAccess.LIST),
+        hs.HopsInteger("list4", "list4", "list4", access = hs.HopsParamAccess.LIST)
+        ],
+    outputs = [
+        hs.HopsNumber("arrList1", "arrList1", "arrList1", access = hs.HopsParamAccess.LIST),
+        hs.HopsNumber("arrList2", "arrList2", "arrList2", access = hs.HopsParamAccess.LIST),
+        hs.HopsNumber("arrList3", "arrList3", "arrList3", access = hs.HopsParamAccess.LIST),
+        hs.HopsNumber("arrList4", "arrList4", "arrList4", access = hs.HopsParamAccess.LIST)
+        ]
+)
+def ndarray_vstack_01(list1: int, list2: int, list3: int, list4: int):
+    arr1 = np.array([list1, list2])
+    arr2 = np.array([list3, list4])
+    print(arr1)
+    print(arr2)
+    arrVstacked = np.vstack((arr1, arr2))
+    print(arrVstacked)
+    return arrVstacked.tolist()[0], arrVstacked.tolist()[1], arrVstacked.tolist()[2], arrVstacked.tolist()[3]
+
+#row_stack is equivalent to vstack for any input arrays
+#write this into a @hops component
+@hops.component(
+    "/ndarray_row_stack_01",
+    name="ndarray_row_stack",
+    nickname="ndarray_row_stack",
+    description="ndarray_row_stack",
+    inputs = [
+        hs.HopsInteger("list1", "list1", "list1", access = hs.HopsParamAccess.LIST),
+        hs.HopsInteger("list2", "list2", "list2", access = hs.HopsParamAccess.LIST),
+        hs.HopsInteger("list3", "list3", "list3", access = hs.HopsParamAccess.LIST),
+        hs.HopsInteger("list4", "list4", "list4", access = hs.HopsParamAccess.LIST)
+        ],
+    outputs = [
+        hs.HopsNumber("arrList1", "arrList1", "arrList1", access = hs.HopsParamAccess.LIST),
+        hs.HopsNumber("arrList2", "arrList2", "arrList2", access = hs.HopsParamAccess.LIST),
+        hs.HopsNumber("arrList3", "arrList3", "arrList3", access = hs.HopsParamAccess.LIST),
+        hs.HopsNumber("arrList4", "arrList4", "arrList4", access = hs.HopsParamAccess.LIST)
+        ]
+)
+def ndarray_row_stack_01(list1: int, list2: int, list3: int, list4: int):
+    arr1 = np.array([list1, list2])
+    arr2 = np.array([list3, list4])
+    print(arr1)
+    print(arr2)
+    arrRowStacked = np.row_stack((arr1, arr2))
+    print(arrRowStacked)
+    return arrRowStacked.tolist()[0], arrRowStacked.tolist()[1], arrRowStacked.tolist()[2], arrRowStacked.tolist()[3]
+
+#write this into a @hops component
+@hops.component(
+    "/ndarray_hstack_01",
+    name="ndarray_hstack",
+    nickname="ndarray_hstack",
+    description="ndarray_hstack",
+    inputs = [
+        hs.HopsInteger("list1", "list1", "list1", access = hs.HopsParamAccess.LIST),
+        hs.HopsInteger("list2", "list2", "list2", access = hs.HopsParamAccess.LIST),
+        hs.HopsInteger("list3", "list3", "list3", access = hs.HopsParamAccess.LIST),
+        hs.HopsInteger("list4", "list4", "list4", access = hs.HopsParamAccess.LIST)
+        ],
+    outputs = [
+        hs.HopsNumber("arrList1", "arrList1", "arrList1", access = hs.HopsParamAccess.LIST),
+        hs.HopsNumber("arrList2", "arrList2", "arrList2", access = hs.HopsParamAccess.LIST)
+        ]
+)
+def ndarray_hstack_01(list1: int, list2: int, list3: int, list4: int):
+    arr1 = np.array([list1, list2])
+    arr2 = np.array([list3, list4])
+    print(arr1)
+    print(arr2)
+    arrHstacked = np.hstack((arr1, arr2))
+    print(arrHstacked)
+    return arrHstacked.tolist()[0], arrHstacked.tolist()[1]
+
+#column_stack is equivalent to hstack only for 2D arrays,
+# for 1D arrays it will stack them as columns
+#converts 1D arrays into 2D arrays first
+#write this into a @hops component
+@hops.component(
+    "/ndarray_column_stack_01",
+    name="ndarray_column_stack",
+    nickname="ndarray_column_stack",
+    description="ndarray_column_stack",
+    inputs = [
+        hs.HopsInteger("list1", "list1", "list1", access = hs.HopsParamAccess.LIST),
+        hs.HopsInteger("list2", "list2", "list2", access = hs.HopsParamAccess.LIST),
+        hs.HopsInteger("list3", "list3", "list3", access = hs.HopsParamAccess.LIST),
+        hs.HopsInteger("list4", "list4", "list4", access = hs.HopsParamAccess.LIST)
+        ],
+    outputs = [
+        hs.HopsNumber("arrList1", "arrList1", "arrList1", access = hs.HopsParamAccess.LIST),
+        hs.HopsNumber("arrList2", "arrList2", "arrList2", access = hs.HopsParamAccess.LIST)
+        ]
+)
+def ndarray_column_stack_01(list1: int, list2: int, list3: int, list4: int):
+    arr1 = np.array([list1, list2])
+    arr2 = np.array([list3, list4])
+    print(arr1)
+    print(arr2)
+    arrColumnStacked = np.column_stack((arr1, arr2))
+    print(arrColumnStacked)
+    return arrColumnStacked.tolist()[0], arrColumnStacked.tolist()[1]
+
+#dstack stacks arrays along the third axis
+#example
+arr1 = np.array([1, 2])
+arr2 = np.array([3, 4])
+arr3 = np.array([5, 6])
+arr4 = np.array([7, 8])
+print(np.dstack(([arr1, arr2], [arr3, arr4])))
+
+#writes this into a @hops component
+@hops.component(
+    "/ndarray_dstack_01",
+    name="ndarray_dstack",
+    nickname="ndarray_dstack",
+    description="ndarray_dstack",
+    inputs = [
+        hs.HopsInteger("list1", "list1", "list1", access = hs.HopsParamAccess.LIST),
+        hs.HopsInteger("list2", "list2", "list2", access = hs.HopsParamAccess.LIST),
+        hs.HopsInteger("list3", "list3", "list3", access = hs.HopsParamAccess.LIST),
+        hs.HopsInteger("list4", "list4", "list4", access = hs.HopsParamAccess.LIST)
+        ],
+    outputs = [
+        hs.HopsNumber("arr1List1", "arr1List1", "arr1List1", access = hs.HopsParamAccess.LIST),
+        hs.HopsNumber("arr1List2", "arr1List2", "arr1List2", access = hs.HopsParamAccess.LIST),
+        hs.HopsNumber("arr2List1", "arr2List1", "arr2List1", access = hs.HopsParamAccess.LIST),
+        hs.HopsNumber("arr2List2", "arr2List2", "arr2List2", access = hs.HopsParamAccess.LIST)
+        ]
+)
+def ndarray_dstack_01(list1: int, list2: int, list3: int, list4: int):
+    arr1 = np.array([list1, list2])
+    arr2 = np.array([list3, list4])
+    print(arr1)
+    print(arr2)
+    arrDstacked = np.dstack(([arr1, arr2]))
+    print(arrDstacked)
+    return arrDstacked.tolist()[0][0], arrDstacked.tolist()[0][1], arrDstacked.tolist()[1][0], arrDstacked.tolist()[1][1]
+
+
+#split divides one array into multiple arrays along an axis
+#takes a list of indices giving the split points
+#example
+arr = rng.standard_normal((5, 2))
+print(arr)
+first, second, third = np.split(arr, [1, 3])
+print(first)
+print(second)
+print(third)
+
+#write this into a @hops component
+@hops.component(
+    "/ndarray_split_16",
+    name="ndarray_split",
+    nickname="ndarray_split",
+    description="ndarray_split",
+    inputs = [
+        hs.HopsInteger("rows", "rows", "rows", access = hs.HopsParamAccess.ITEM),
+        hs.HopsInteger("columns", "columns", "columns", access = hs.HopsParamAccess.ITEM),
+        hs.HopsInteger("splitStart", "splitStart", "splitStart", access = hs.HopsParamAccess.ITEM),
+        hs.HopsInteger("splitEnd", "splitEnd", "splitEnd", access = hs.HopsParamAccess.ITEM)
+        ],
+    outputs = [
+        hs.HopsString("first", "first", "first", access = hs.HopsParamAccess.LIST),
+        hs.HopsString("second", "second", "second", access = hs.HopsParamAccess.LIST),
+        hs.HopsString("third", "third", "third", access = hs.HopsParamAccess.LIST)
+        ]
+)
+def ndarray_split_16(rows: int, columns: int, splitStart: int, splitEnd: int):
+    arr = rng.standard_normal((rows, columns))
+    print(arr)
+    arrSplit = np.split(arr, [splitStart, splitEnd])
+    print(arrSplit)
+    print(type(arrSplit))
+    return arrSplit[0].tolist(), arrSplit[1].tolist(), arrSplit[2].tolist()
+
+#hsplit and vsplit are convenient shortcuts for splitting on axis 0 and axis 1, respectively
+#example
+arr = rng.standard_normal((5, 2))
+print(arr)
+first, second = np.hsplit(arr, [1])
+print(first)
+print(second)
+
+#write this into a @hops component
+
+
+#example
+arr = rng.standard_normal((5, 2))
+print(arr)
+first, second = np.vsplit(arr, [1])
+print(first)
+print(second) 
+
+#write this into a component
+@hops.component(
+    "/ndarray_vsplit_01",
+    name="ndarray_vsplit",
+    nickname="ndarray_vsplit",
+    description="ndarray_vsplit",
+    inputs = [
+        hs.HopsInteger("rows", "rows", "rows", access = hs.HopsParamAccess.ITEM),
+        hs.HopsInteger("columns", "columns", "columns", access = hs.HopsParamAccess.ITEM),
+        hs.HopsInteger("splitStart", "splitStart", "splitStart", access = hs.HopsParamAccess.ITEM),
+        hs.HopsInteger("splitEnd", "splitEnd", "splitEnd", access = hs.HopsParamAccess.ITEM)
+        ],
+    outputs = [
+        hs.HopsString("first", "first", "first", access = hs.HopsParamAccess.LIST),
+        hs.HopsString("second", "second", "second", access = hs.HopsParamAccess.LIST)
+        ]
+)
+def ndarray_vsplit_01(rows: int, columns: int, splitStart: int, splitEnd: int):
+    arr = rng.standard_normal((rows, columns))
+    print(arr)
+    arrVsplit = np.vsplit(arr, [splitStart, splitEnd])
+    print(arrVsplit)
+    print(type(arrVsplit))
+    return arrVsplit[0].tolist(), arrVsplit[1].tolist()
+
+@hops.component(
+    "/ndarray_hsplit_01",
+    name="ndarray_hsplit",
+    nickname="ndarray_hsplit",
+    description="ndarray_hsplit",
+    inputs = [
+        hs.HopsInteger("rows", "rows", "rows", access = hs.HopsParamAccess.ITEM),
+        hs.HopsInteger("columns", "columns", "columns", access = hs.HopsParamAccess.ITEM),
+        hs.HopsInteger("splitStart", "splitStart", "splitStart", access = hs.HopsParamAccess.ITEM),
+        hs.HopsInteger("splitEnd", "splitEnd", "splitEnd", access = hs.HopsParamAccess.ITEM)
+        ],
+    outputs = [
+        hs.HopsString("first", "first", "first", access = hs.HopsParamAccess.LIST),
+        hs.HopsString("second", "second", "second", access = hs.HopsParamAccess.LIST)
+        ]
+)
+def ndarray_hsplit_01(rows: int, columns: int, splitStart: int, splitEnd: int):
+    arr = rng.standard_normal((rows, columns))
+    print(arr)
+    arrHsplit = np.hsplit(arr, [splitStart, splitEnd])
+    print(arrHsplit)
+    print(type(arrHsplit))
+    return arrHsplit[0].tolist(), arrHsplit[1].tolist()
+
+#Stacking Helpers: r_ and c_
+#numpy.r_ and numpy.c_ are useful tools for creating stacked arrays 
+# in a more concise and readable way
+#example of r_
+arr = np.arange(6)
+arr1 = arr.reshape((3, 2))
+arr2 = rng.standard_normal((3, 2))
+print(np.r_[arr1, arr2])
+print(np.c_[np.r_[arr1, arr2], arr])
+
+#write this into a @hops component
+@hops.component(
+    "/ndarray_r_02",
+    name="ndarray_r_",
+    nickname="ndarray_r_",
+    description="ndarray_r_",
+    inputs = [
+        hs.HopsInteger("list1", "list1", "list1", access = hs.HopsParamAccess.LIST),
+        hs.HopsInteger("list2", "list2", "list2", access = hs.HopsParamAccess.LIST),
+        hs.HopsInteger("list3", "list3", "list3", access = hs.HopsParamAccess.LIST),
+        hs.HopsInteger("list4", "list4", "list4", access = hs.HopsParamAccess.LIST),
+        hs.HopsInteger("list5", "list5", "list5", access = hs.HopsParamAccess.LIST),
+        hs.HopsInteger("list6", "list6", "list6", access = hs.HopsParamAccess.LIST)
+        ],
+    outputs = [
+        hs.HopsNumber("arrList1", "arrList1", "arrList1", access = hs.HopsParamAccess.LIST),
+        hs.HopsNumber("arrList2", "arrList2", "arrList2", access = hs.HopsParamAccess.LIST),
+        hs.HopsNumber("arrList3", "arrList3", "arrList3", access = hs.HopsParamAccess.LIST),
+        hs.HopsNumber("arrList4", "arrList4", "arrList4", access = hs.HopsParamAccess.LIST),
+        hs.HopsNumber("arrList5", "arrList5", "arrList5", access = hs.HopsParamAccess.LIST),
+        hs.HopsNumber("arrList6", "arrList6", "arrList6", access = hs.HopsParamAccess.LIST)
+        ]
+)
+def ndarray_r_02(list1: int, list2: int, list3: int, list4: int, list5: int, list6: int):
+    arr1 = np.array([list1, list2])
+    arr2 = np.array([list3, list4])
+    arr3 = np.array([list5, list6])
+    print(arr1)
+    print(arr2)
+    print(arr3)
+    arrR_ = np.r_[arr1, arr2, arr3]
+    print(arrR_)
+    return arrR_.tolist()[0], arrR_.tolist()[1], arrR_.tolist()[2], arrR_.tolist()[3], arrR_.tolist()[4], arrR_.tolist()[5]
+
+
+
+
+#example of c_
+np.c_[1:6, -10:-5]
+
+#see the numpy documentation for more information on r_ and c_
+#https://numpy.org/doc/stable/reference/generated/numpy.r_.html
+#https://numpy.org/doc/stable/reference/generated/numpy.c_.html
+
+#write this into a @hops component
+@hops.component(
+    "/ndarray_c_02",
+    name="ndarray_c_",
+    nickname="ndarray_c_",
+    description="ndarray_c_",
+    inputs = [
+        hs.HopsInteger("start1", "start1", "start1", access = hs.HopsParamAccess.ITEM),
+        hs.HopsInteger("end1", "end1", "end1", access = hs.HopsParamAccess.ITEM),
+        hs.HopsInteger("start2", "start2", "start2", access = hs.HopsParamAccess.ITEM),
+        hs.HopsInteger("end2", "end2", "end2", access = hs.HopsParamAccess.ITEM)
+        ],
+    outputs = [
+        hs.HopsNumber("arrList1", "arrList1", "arrList1", access = hs.HopsParamAccess.LIST),
+        hs.HopsNumber("arrList2", "arrList2", "arrList2", access = hs.HopsParamAccess.LIST),
+        hs.HopsNumber("arrList3", "arrList3", "arrList3", access = hs.HopsParamAccess.LIST),
+        hs.HopsNumber("arrList4", "arrList4", "arrList4", access = hs.HopsParamAccess.LIST),
+        hs.HopsNumber("arrList5", "arrList5", "arrList5", access = hs.HopsParamAccess.LIST)
+        ]
+)
+def ndarray_c_02(start1: int, end1: int, start2: int, end2: int):
+    arrC_ = np.c_[start1:end1, start2:end2]
+    print(arrC_)
+    return arrC_.tolist()[0], arrC_.tolist()[1], arrC_.tolist()[2], arrC_.tolist()[3], arrC_.tolist()[4]
+
+#Repeating Elements: tile and repeat
+#numpy.tile and numpy.repeat are useful tools for repeating or replicating arrays 
+#to produce larger arrays
+#example of tile
+arr = np.arange(3)
+print(arr)
+print(np.repeat(arr, 3))
+#broadcasting is used to replicate the array more often along different axes with numpy.tile
+print(arr.repeat([2, 3, 4]))
+
+#write this into a @hops component
+@hops.component(
+    "/ndarray_repeat_01",
+    name="ndarray_repeat",
+    nickname="ndarray_repeat",
+    description="ndarray_repeat",
+    inputs = [
+        hs.HopsInteger("list1", "list1", "list1", access = hs.HopsParamAccess.LIST),
+        hs.HopsInteger("repeating", "repeating", "repeating", access = hs.HopsParamAccess.ITEM)
+        ],
+    outputs = [
+        hs.HopsNumber("arrList1", "arrList1", "arrList1", access = hs.HopsParamAccess.LIST)
+        ]
+)
+def ndarray_repeat_01(list1: int, repeating: int):
+    arr = np.array(list1)
+    print(arr)
+    arrRepeated = np.repeat(arr, repeating)
+    print(arrRepeated)
+    return arrRepeated.tolist()
+
+#write this into a @hops component
+@hops.component(
+    "/ndarray_tile_01",
+    name="ndarray_tile",
+    nickname="ndarray_tile",
+    description="ndarray_tile",
+    inputs = [
+        hs.HopsInteger("list1", "list1", "list1", access = hs.HopsParamAccess.LIST),
+        hs.HopsInteger("repeating", "repeating", "repeating", access = hs.HopsParamAccess.ITEM)
+        ],
+    outputs = [
+        hs.HopsNumber("arrList1", "arrList1", "arrList1", access = hs.HopsParamAccess.LIST)
+        ]
+)
+def ndarray_tile_01(list1: int, repeating: int):
+    arr = np.array(list1)
+    print(arr)
+    arrTile = np.tile(arr, repeating)
+    print(arrTile)
+    return arrTile.tolist()
+
+
+#multi-dimensional arrays can have each axis tiled multiple times with a single number
+#example
+arr = rng.standard_normal((2, 2))
+print(arr)  
+print(np.repeat(arr, 2, axis=0))
+#if no axis is specified, the array is flattened before use
+
+
+#write this into a @hops component
+@hops.component(
+    "/ndarray_repeat_07",
+    name="ndarray_repeat",
+    nickname="ndarray_repeat",
+    description="ndarray_repeat",
+    inputs = [
+        hs.HopsInteger("rows", "rows", "rows", access = hs.HopsParamAccess.ITEM),
+        hs.HopsInteger("columns", "columns", "columns", access = hs.HopsParamAccess.ITEM),
+        hs.HopsInteger("repeat", "repeat", "repeat", access = hs.HopsParamAccess.ITEM)
+        ],
+    outputs = [
+        hs.HopsNumber("arrList1", "arrList1", "arrList1", access = hs.HopsParamAccess.LIST),
+        hs.HopsNumber("arrList2", "arrList2", "arrList2", access = hs.HopsParamAccess.LIST),
+        hs.HopsNumber("arrList3", "arrList3", "arrList3", access = hs.HopsParamAccess.LIST),
+        hs.HopsNumber("arrList4", "arrList4", "arrList4", access = hs.HopsParamAccess.LIST)
+        ]
+)
+def ndarray_repeat_07(rows: int, columns: int, repeat: int):
+    arr = rng.standard_normal((rows, columns))
+    print(arr)
+    arrRepeated = np.repeat(arr, repeat, axis=0)
+    print(arrRepeated)
+    print(type(arrRepeated))
+    return arrRepeated.tolist()[0], arrRepeated.tolist()[1], arrRepeated.tolist()[2], arrRepeated.tolist()[3]
+
+#pass an array of integers specifying the number of repetitions along each axis
+#to repeat a given slice a different number of times
+print(np.repeat(arr, [2, 3], axis=0))
+print(np.repeat(arr, [2, 3], axis=1))
+
+#write this into a @hops component
+@hops.component(
+    "/ndarray_repeat_08",
+    name="ndarray_repeat",
+    nickname="ndarray_repeat",
+    description="ndarray_repeat",
+    inputs = [
+        hs.HopsInteger("rows", "rows", "rows", access = hs.HopsParamAccess.ITEM),
+        hs.HopsInteger("columns", "columns", "columns", access = hs.HopsParamAccess.ITEM),
+        hs.HopsInteger("repeat1", "repeat1", "repeat1", access = hs.HopsParamAccess.ITEM),
+        hs.HopsInteger("repeat2", "repeat2", "repeat2", access = hs.HopsParamAccess.ITEM)
+        ],
+    outputs = [
+        hs.HopsNumber("arrList1", "arrList1", "arrList1", access = hs.HopsParamAccess.LIST),
+        hs.HopsNumber("arrList2", "arrList2", "arrList2", access = hs.HopsParamAccess.LIST),
+        hs.HopsNumber("arrList3", "arrList3", "arrList3", access = hs.HopsParamAccess.LIST),
+        hs.HopsNumber("arrList4", "arrList4", "arrList4", access = hs.HopsParamAccess.LIST),
+        hs.HopsNumber("arrList5", "arrList5", "arrList5", access = hs.HopsParamAccess.LIST)
+        ]
+)
+def ndarray_repeat_08(rows: int, columns: int, repeat1: int, repeat2: int):
+    arr = rng.standard_normal((rows, columns))
+    print(arr)
+    arrRepeated = np.repeat(arr, [repeat1, repeat2], axis=0)
+    print(arrRepeated)
+    print(type(arrRepeated))
+    return arrRepeated.tolist()[0], arrRepeated.tolist()[1], arrRepeated.tolist()[2], arrRepeated.tolist()[3], arrRepeated.tolist()[4]
+
+#write this into a @hops component with axis = 1
+@hops.component(
+    "/ndarray_repeat_09",
+    name="ndarray_repeat",
+    nickname="ndarray_repeat",
+    description="ndarray_repeat",
+    inputs = [
+        hs.HopsInteger("rows", "rows", "rows", access = hs.HopsParamAccess.ITEM),
+        hs.HopsInteger("columns", "columns", "columns", access = hs.HopsParamAccess.ITEM),
+        hs.HopsInteger("repeat1", "repeat1", "repeat1", access = hs.HopsParamAccess.ITEM),
+        hs.HopsInteger("repeat2", "repeat2", "repeat2", access = hs.HopsParamAccess.ITEM)
+        ],
+    outputs = [
+        hs.HopsNumber("arrList1", "arrList1", "arrList1", access = hs.HopsParamAccess.LIST),
+        hs.HopsNumber("arrList2", "arrList2", "arrList2", access = hs.HopsParamAccess.LIST)
+        ]
+)
+def ndarray_repeat_09(rows: int, columns: int, repeat1: int, repeat2: int):
+    arr = rng.standard_normal((rows, columns))
+    print(arr)
+    arrRepeated = np.repeat(arr, [repeat1, repeat2], axis=1)
+    print(arrRepeated)
+    print(type(arrRepeated))
+    return arrRepeated.tolist()[0], arrRepeated.tolist()[1]
+
+#tile on the other hand, takes a tuple specifying the number of repetitions along each axis
+#example
+print(np.tile(arr, 2))
+
+#write this into a @hops component
+@hops.component(
+    "/ndarray_tile_03",
+    name="ndarray_tile",
+    nickname="ndarray_tile",
+    description="ndarray_tile",
+    inputs = [
+        hs.HopsInteger("rows", "rows", "rows", access = hs.HopsParamAccess.ITEM),
+        hs.HopsInteger("columns", "columns", "columns", access = hs.HopsParamAccess.ITEM),
+        hs.HopsInteger("tileCount", "tileCount", "tileCount", access = hs.HopsParamAccess.ITEM)
+        ],
+    outputs = [
+        hs.HopsNumber("arrList1", "arrList1", "arrList1", access = hs.HopsParamAccess.LIST),
+        hs.HopsNumber("arrList2", "arrList2", "arrList2", access = hs.HopsParamAccess.LIST)
+        ]
+)
+def ndarray_tile_03(rows: int, columns: int, tileCount: int):
+    arr = rng.standard_normal((rows, columns))
+    print(arr)
+    arrTiled = np.tile(arr, tileCount)
+    print(arrTiled)
+    return arrTiled.tolist()[0], arrTiled.tolist()[1]
+
+#second argument can be a tuple of integers specifying the number of repetitions along each axis
+#example
+print(np.tile(arr, (2, 1)))
+
+#example
+print(np.tile(arr, (3, 2)))
+
+#write this into a @hops component
+@hops.component(
+    "/ndarray_tile_04",
+    name="ndarray_tile",
+    nickname="ndarray_tile",
+    description="ndarray_tile",
+    inputs = [
+        hs.HopsInteger("rows", "rows", "rows", access = hs.HopsParamAccess.ITEM),
+        hs.HopsInteger("columns", "columns", "columns", access = hs.HopsParamAccess.ITEM),
+        hs.HopsInteger("tileCount1", "tileCount1", "tileCount1", access = hs.HopsParamAccess.ITEM),
+        hs.HopsInteger("tileCount2", "tileCount2", "tileCount2", access = hs.HopsParamAccess.ITEM)
+        ],
+    outputs = [
+        hs.HopsNumber("arrList1", "arrList1", "arrList1", access = hs.HopsParamAccess.LIST),
+        hs.HopsNumber("arrList2", "arrList2", "arrList2", access = hs.HopsParamAccess.LIST),
+        hs.HopsNumber("arrList3", "arrList3", "arrList3", access = hs.HopsParamAccess.LIST),
+        hs.HopsNumber("arrList4", "arrList4", "arrList4", access = hs.HopsParamAccess.LIST),
+        hs.HopsNumber("arrList5", "arrList5", "arrList5", access = hs.HopsParamAccess.LIST),
+        hs.HopsNumber("arrList6", "arrList6", "arrList6", access = hs.HopsParamAccess.LIST)
+        ]
+)
+def ndarray_tile_04(rows: int, columns: int, tileCount1: int, tileCount2: int):
+    arr = rng.standard_normal((rows, columns))
+    print(arr)
+    arrTiled = np.tile(arr, (tileCount1, tileCount2))
+    print(arrTiled)
+    return arrTiled.tolist()[0], arrTiled.tolist()[1], arrTiled.tolist()[2], arrTiled.tolist()[3], arrTiled.tolist()[4], arrTiled.tolist()[5]
+
+#Fancy Indexing Equivalents: take and put
+#numpy.take and numpy.put are useful tools for performing fancy indexing operations
+#example of take
+arr = np.arange(10) * 100
+inds = [7, 1, 2, 6]
+print(arr[inds])
+#alternative ndarray methods that are useful in the special case of making a selection 
+#from a single axis
+print(np.take(arr, inds))
+print(arr.put(inds, 42))
+print(arr)
+
+#write this into a @hops component
+@hops.component(
+    "/ndarray_take_01",
+    name="ndarray_take",
+    nickname="ndarray_take",
+    description="ndarray_take",
+    inputs = [
+        hs.HopsInteger("list1", "list1", "list1", access = hs.HopsParamAccess.LIST),
+        hs.HopsInteger("index1", "index1", "index1", access = hs.HopsParamAccess.ITEM),
+        hs.HopsInteger("index2", "index2", "index2", access = hs.HopsParamAccess.ITEM),
+        hs.HopsInteger("index3", "index3", "index3", access = hs.HopsParamAccess.ITEM),
+        hs.HopsInteger("index4", "index4", "index4", access = hs.HopsParamAccess.ITEM)
+        ],
+    outputs = [
+        hs.HopsNumber("arrList1", "arrList1", "arrList1", access = hs.HopsParamAccess.LIST)
+        ]
+)
+def ndarray_take_01(list1: int, index1: int, index2: int, index3: int, index4: int):
+    arr = np.array(list1)
+    print(arr)
+    arrTake = np.take(arr, [index1, index2, index3, index4])
+    print(arrTake)
+    return arrTake.tolist()
+
+#write this into a @hops component
+@hops.component(
+    "/ndarray_put_02",
+    name="ndarray_put",
+    nickname="ndarray_put",
+    description="ndarray_put",
+    inputs = [
+        hs.HopsInteger("list1", "list1", "list1", access = hs.HopsParamAccess.LIST),
+        hs.HopsInteger("index1", "index1", "index1", access = hs.HopsParamAccess.ITEM),
+        hs.HopsInteger("index2", "index2", "index2", access = hs.HopsParamAccess.ITEM),
+        hs.HopsInteger("index3", "index3", "index3", access = hs.HopsParamAccess.ITEM),
+        hs.HopsInteger("index4", "index4", "index4", access = hs.HopsParamAccess.ITEM),
+        hs.HopsInteger("value", "value", "value", access = hs.HopsParamAccess.ITEM)
+        ],
+    outputs = [
+        hs.HopsNumber("arrList1", "arrList1", "arrList1", access = hs.HopsParamAccess.LIST),
+
+        ]
+)
+def ndarray_put_02(list1: int, index1: int, index2: int, index3: int, index4: int, value: int):
+    arr = np.array(list1)
+    print(arr)
+    inds = [index1, index2, index3, index4]
+    print(arr.put(inds, value))
+    print(arr)
+    arr.put(inds, value)
+    return arr.tolist()
+
+@hops.component(
+    "/ndarray_put_03",
+    name="ndarray_put",
+    nickname="ndarray_put",
+    description="ndarray_put",
+    inputs = [
+        hs.HopsInteger("list1", "list1", "list1", access = hs.HopsParamAccess.LIST),
+        hs.HopsInteger("index1", "index1", "index1", access = hs.HopsParamAccess.ITEM),
+        hs.HopsInteger("index2", "index2", "index2", access = hs.HopsParamAccess.ITEM),
+        hs.HopsInteger("index3", "index3", "index3", access = hs.HopsParamAccess.ITEM),
+        hs.HopsInteger("index4", "index4", "index4", access = hs.HopsParamAccess.ITEM),
+        hs.HopsInteger("value1", "value1", "value1", access = hs.HopsParamAccess.ITEM),
+        hs.HopsInteger("value2", "value2", "value2", access = hs.HopsParamAccess.ITEM),
+        hs.HopsInteger("value3", "value3", "value3", access = hs.HopsParamAccess.ITEM),
+        hs.HopsInteger("value4", "value4", "value4", access = hs.HopsParamAccess.ITEM)
+        ],
+    outputs = [
+        hs.HopsNumber("arrList1", "arrList1", "arrList1", access = hs.HopsParamAccess.LIST)
+        ]
+)
+def ndarray_put_03(list1: int, index1: int, index2: int, index3: int, index4: int, value1: int, value2: int, value3: int, value4: int):
+    arr = np.array(list1)
+    print(arr)
+    inds = [index1, index2, index3, index4]
+    vals = [value1, value2, value3, value4]
+    print(arr.put(inds, vals))
+    print(arr)
+    arr.put(inds, vals)
+    return arr.tolist()
+
+# to take along a different axis, pass the axis keyword argument
+#example
+inds = [2, 0, 2, 1]
+arr = rng.standard_normal((2, 4))
+print(arr)
+print(np.take(arr, inds, axis=1))
+
+#write this into a @hops component
+@hops.component(
+    "/ndarray_take_02",
+    name="ndarray_take",
+    nickname="ndarray_take",
+    description="ndarray_take",
+    inputs = [
+        hs.HopsInteger("rows", "rows", "rows", access = hs.HopsParamAccess.ITEM),
+        hs.HopsInteger("columns", "columns", "columns", access = hs.HopsParamAccess.ITEM),
+        hs.HopsInteger("index1", "index1", "index1", access = hs.HopsParamAccess.ITEM),
+        hs.HopsInteger("index2", "index2", "index2", access = hs.HopsParamAccess.ITEM),
+        hs.HopsInteger("index3", "index3", "index3", access = hs.HopsParamAccess.ITEM),
+        hs.HopsInteger("index4", "index4", "index4", access = hs.HopsParamAccess.ITEM),
+        hs.HopsInteger("axis", "axis", "axis", access = hs.HopsParamAccess.ITEM)
+        ],
+    outputs = [
+        hs.HopsNumber("arrList1", "arrList1", "arrList1", access = hs.HopsParamAccess.LIST),
+        hs.HopsNumber("arrList2", "arrList2", "arrList2", access = hs.HopsParamAccess.LIST)
+        ]
+)
+def ndarray_take_02(rows: int, columns: int, index1: int, index2: int, index3: int, index4: int, axis: int):
+    arr = rng.standard_normal((rows, columns))
+    print(arr)
+    inds = [index1, index2, index3, index4]
+    arrTake = np.take(arr, inds, axis=axis)
+    print(arrTake)
+    return arrTake.tolist()[0], arrTake.tolist()[1]
+
+#put does not accept an axis argument but instead flattens the array (one-dimensional, C order)
+#when you need to set elements using an array on other axes, it is best to use fancy indexing
+# []-based indexing or the equivalent take method
+
+"""
+██████╗ ██████╗  ██████╗  █████╗ ██████╗  ██████╗ █████╗ ███████╗████████╗██╗███╗   ██╗ ██████╗ 
+██╔══██╗██╔══██╗██╔═══██╗██╔══██╗██╔══██╗██╔════╝██╔══██╗██╔════╝╚══██╔══╝██║████╗  ██║██╔════╝ 
+██████╔╝██████╔╝██║   ██║███████║██║  ██║██║     ███████║███████╗   ██║   ██║██╔██╗ ██║██║  ███╗
+██╔══██╗██╔══██╗██║   ██║██╔══██║██║  ██║██║     ██╔══██║╚════██║   ██║   ██║██║╚██╗██║██║   ██║
+██████╔╝██║  ██║╚██████╔╝██║  ██║██████╔╝╚██████╗██║  ██║███████║   ██║   ██║██║ ╚████║╚██████╔╝
+╚═════╝ ╚═╝  ╚═╝ ╚═════╝ ╚═╝  ╚═╝╚═════╝  ╚═════╝╚═╝  ╚═╝╚══════╝   ╚═╝   ╚═╝╚═╝  ╚═══╝ ╚═════╝ 
+"""
+#Broadcasting
+#Broadcasting is a powerful tool that allows numpy to work with arrays of different shapes
+#when performing arithmetic operations
+#powerful but can lead to confusion, even for experienced users
+#the simplest broadcasting example occurs when combining a scalar value with an array
+#example
+arr = np.arange(5)
+print(arr)
+print(arr * 4)
+
+#the scalar value 4 has been broadcast to all of the other elements in the multiplication operation
+#we can think of the scalar 4 as a 1d array with the shape (1,) that has been broadcast to (5,)
+#we demean the array by subtracting the mean value of each column
+#example
+arr = rng.standard_normal((4, 3))
+print(arr.mean(0))
+demeaned = arr - arr.mean(0)
+print(demeaned)
+print(demeaned.mean(0))
+
+#write this into a @hops component
+@hops.component(
+    "/ndarray_broadcasting_01",
+    name="ndarray_broadcasting",
+    nickname="ndarray_broadcasting",
+    description="ndarray_broadcasting",
+    inputs = [
+        hs.HopsInteger("rows", "rows", "rows", access = hs.HopsParamAccess.ITEM),
+        hs.HopsInteger("columns", "columns", "columns", access = hs.HopsParamAccess.ITEM)
+        ],
+    outputs = [
+        hs.HopsNumber("arrList1", "arrList1", "arrList1", access = hs.HopsParamAccess.LIST),
+        hs.HopsNumber("arrList2", "arrList2", "arrList2", access = hs.HopsParamAccess.LIST),
+        hs.HopsNumber("arrList3", "arrList3", "arrList3", access = hs.HopsParamAccess.LIST),
+        hs.HopsNumber("arrList4", "arrList4", "arrList4", access = hs.HopsParamAccess.LIST)
+        ]
+)
+def ndarray_broadcasting_01(rows: int, columns: int):
+    arr = rng.standard_normal((rows, columns))
+    print(arr)
+    arrMean = arr.mean(0)
+    print(arrMean)
+    demeaned = arr - arrMean
+    print(demeaned)
+    print(demeaned.mean(0))
+    return demeaned.tolist()[0], demeaned.tolist()[1], demeaned.tolist()[2], demeaned.tolist()[3]
+
+#Demeaning the rows as a broadcasting operation requires a bit more care
+#Broadcasting is performed on the rightmost dimensions of the arrays
+#subtracting the row means from each column of a 2d array
+#this is possible if you follow the rules
+
+#the Broadcasting Rule
+#two dimensions are compatible for broadcasting if for each trailing dimension
+#(starting from the end), the axis lengths match or if either of the lengths is 1
+#Broadcasting is then performed over the missing or length 1 dimensions
+
+#Broadcasting over axis 0 with a 1d array
+#example
+arr = np.random.randn(4, 3)
+print(arr.mean(0))
+print(arr - arr.mean(0))
+
+#Broadcasting over axis 1 with a 2d array
+#to subtract over axis 1 (i.e. subtract the column means from each row), we need to
+#reshape the mean array to be a column vector
+#example
+arr = np.random.randn(4, 3)
+print(arr.mean(1))
+print(arr.mean(1).reshape((4, 1)))
+print(arr - arr.mean(1).reshape((4, 1)))
+
+#Broadcasting over axis 1 with a 2d array
+#write this into a @hops component
+@hops.component(
+    "/ndarray_broadcasting_02",
+    name="ndarray_broadcasting",
+    nickname="ndarray_broadcasting",
+    description="ndarray_broadcasting",
+    inputs = [
+        hs.HopsInteger("rows", "rows", "rows", access = hs.HopsParamAccess.ITEM),
+        hs.HopsInteger("columns", "columns", "columns", access = hs.HopsParamAccess.ITEM)
+        ],
+    outputs = [
+        hs.HopsNumber("arrList1", "arrList1", "arrList1", access = hs.HopsParamAccess.LIST),
+        hs.HopsNumber("arrList2", "arrList2", "arrList2", access = hs.HopsParamAccess.LIST),
+        hs.HopsNumber("arrList3", "arrList3", "arrList3", access = hs.HopsParamAccess.LIST),
+        hs.HopsNumber("arrList4", "arrList4", "arrList4", access = hs.HopsParamAccess.LIST)
+        ]
+)
+def ndarray_broadcasting_02(rows: int, columns: int):   
+    arr = rng.standard_normal((rows, columns))
+    print(arr)
+    arrMean = arr.mean(1)
+    print(arrMean)
+    arrMeanReshaped = arrMean.reshape((rows, 1))
+    print(arrMeanReshaped)
+    demeaned = arr - arrMeanReshaped
+    print(demeaned)
+    print(demeaned.mean(1))
+    return demeaned.tolist()[0], demeaned.tolist()[1], demeaned.tolist()[2], demeaned.tolist()[3]
+
+#Broadcasting over axis 0 of a 3d array
+#example
+arr = np.random.randn(3, 4, 2)
+arr2 = np.random.randn(4, 2)
+#broadcast over the first dimension of arr
+print(arr.mean(0).shape)
+print(arr2.shape)
+print(arr - arr.mean(0))
+
+#write this into a @hops component
+#Broadcasting over axis 0 of a 3d array
+@hops.component(
+    "/ndarray_broadcasting_3d",
+    name="ndarray_broadcasting",
+    nickname="ndarray_broadcasting",
+    description="ndarray_broadcasting",
+    inputs = [
+        hs.HopsInteger("rows", "rows", "rows", access = hs.HopsParamAccess.ITEM),
+        hs.HopsInteger("columns", "columns", "columns", access = hs.HopsParamAccess.ITEM),
+        hs.HopsInteger("depth", "depth", "depth", access = hs.HopsParamAccess.ITEM)
+        ],
+    outputs = [
+        hs.HopsString("arrList1", "arrList1", "arrList1", access = hs.HopsParamAccess.LIST)
+        ]
+)
+def ndarray_broadcasting_3e(rows: int, columns: int, depth: int):
+    arr = rng.standard_normal((rows, columns, depth))
+    arr2 = rng.standard_normal((columns, depth))
+    print(arr.mean(0).shape)
+    print(arr2.shape)
+    print(arr - arr.mean(0))
+    return (arr - arr.mean(0)).tolist()
+
+#write this into a @hops component
+#Broadcasting over axis 0 of a 3d array
+@hops.component(
+    "/ndarray_broadcasting_3f",
+    name="ndarray_broadcasting",
+    nickname="ndarray_broadcasting",
+    description="ndarray_broadcasting",
+    inputs = [
+        hs.HopsInteger("rows", "rows", "rows", access = hs.HopsParamAccess.ITEM),
+        hs.HopsInteger("columns", "columns", "columns", access = hs.HopsParamAccess.ITEM),
+        hs.HopsInteger("depth", "depth", "depth", access = hs.HopsParamAccess.ITEM)
+        ],
+    outputs = [
+        hs.HopsNumber("arr1List1", "arr1List1", "arr1List1", access = hs.HopsParamAccess.LIST),
+        hs.HopsNumber("arr1List2", "arr1List2", "arr1List2", access = hs.HopsParamAccess.LIST),
+        hs.HopsNumber("arr2List1", "arr2List1", "arr2List1", access = hs.HopsParamAccess.LIST),
+        hs.HopsNumber("arr2List2", "arr2List2", "arr2List2", access = hs.HopsParamAccess.LIST),
+        hs.HopsNumber("arr3List1", "arr3List1", "arr3List1", access = hs.HopsParamAccess.LIST),
+        hs.HopsNumber("arr3List2", "arr3List2", "arr3List2", access = hs.HopsParamAccess.LIST),
+        hs.HopsNumber("arr4List1", "arr4List1", "arr4List1", access = hs.HopsParamAccess.LIST),
+        hs.HopsNumber("arr4List2", "arr4List2", "arr4List2", access = hs.HopsParamAccess.LIST)
+        ]
+)
+def ndarray_broadcasting_3f(rows: int, columns: int, depth: int):
+    arr = rng.standard_normal((rows, columns, depth))
+    arr2 = rng.standard_normal((columns, depth))
+    print(arr.mean(0).shape)
+    print(arr2.shape)
+    print(arr - arr.mean(0))
+    return (arr - arr.mean(0)).tolist()[0][0], (arr - arr.mean(0)).tolist()[0][1], (arr - arr.mean(0)).tolist()[1][0], (arr - arr.mean(0)).tolist()[1][1], (arr - arr.mean(0)).tolist()[2][0], (arr - arr.mean(0)).tolist()[2][1], (arr - arr.mean(0)).tolist()[3][0], (arr - arr.mean(0)).tolist()[3][1]
+
+#Broadcasting over Other Axes
+#broadcasting with higher dimensional arrays can seem even more mind-bending
+#just follow the rules
+#if you don't you will get an error or unexpected result like this
+#ValueError: operands could not be broadcast together with shapes (4,3) (4,)
+
+#according to the Broadcasting Rule, the "broadcasting dimensions" must be 1 in the smaller array
+#example
+arr = np.random.randn(4, 3)
+arr - arr.mean(1).reshape((4, 1))
+print(arr.mean(1).reshape((4, 1)))
+
+#in the 3D case, you can think of the operation as subtracting a 2d array from a 3d array
+#where the 2d array is broadcast across the 3d array
+#broadcasting over any of the 3 dimensions is only a matter of reshaping the data
+#to be compatible with the higher dimensional array
+
+#broadcast over each axis of a three-dimensional array
+#Compatible 2D array of shapes for broadcasting over a 3D array
+#the common problem is needing a new axis with length 1 for broadcasting purposes
+#using reshape is one option, but inserting an axis requires constructing a tuple indicating
+#the new shape
+#this can be tedious
+#Numpy arrays offer another way to insert a new axis directly with np.newaxis
+#along the "full" slices to insert the new axis
+#example
+arr = np.zeros((4, 4))
+arr_3d = arr[:, np.newaxis, :]
+print(arr_3d.shape)
+
+arr_1d = np.random.normal(size=3)
+print(arr_1d[:, np.newaxis])
+print(arr_1d[np.newaxis, :])
+
+#write this into a @hops component
+@hops.component(
+    "/ndarray_newaxis_01",
+    name="ndarray_newaxis",
+    nickname="ndarray_newaxis",
+    description="ndarray_newaxis",
+    inputs = [
+        hs.HopsInteger("rows", "rows", "rows", access = hs.HopsParamAccess.ITEM),
+        hs.HopsInteger("columns", "columns", "columns", access = hs.HopsParamAccess.ITEM),
+        hs.HopsInteger("depth", "depth", "depth", access = hs.HopsParamAccess.ITEM),
+        hs.HopsInteger("count", "count", "count", access = hs.HopsParamAccess.ITEM)
+        ],
+    outputs = [
+        hs.HopsString("arrList1", "arrList1", "arrList1", access = hs.HopsParamAccess.LIST),
+        hs.HopsString("arrList2", "arrList2", "arrList2", access = hs.HopsParamAccess.LIST),
+        hs.HopsString("arrList3", "arrList3", "arrList3", access = hs.HopsParamAccess.LIST)
+        ]
+)
+def ndarray_newaxis_01(rows: int, columns: int, depth: int, count: int):
+    arr = rng.standard_normal((rows, columns, depth))
+    arr_3d = arr[:, np.newaxis, :]
+    print(arr_3d.shape)
+    arr_1d = np.random.normal(size=count)
+    print(arr_1d[:, np.newaxis])
+    print(arr_1d[np.newaxis, :])
+    return arr_3d.tolist(), arr_1d[:, np.newaxis].tolist(), arr_1d[np.newaxis, :].tolist()
+
+#write this into a @hops component
+@hops.component(
+    "/ndarray_newaxis_01c",
+    name="ndarray_newaxis",
+    nickname="ndarray_newaxis",
+    description="ndarray_newaxis",
+    inputs = [
+        hs.HopsInteger("rows", "rows", "rows", access = hs.HopsParamAccess.ITEM),
+        hs.HopsInteger("columns", "columns", "columns", access = hs.HopsParamAccess.ITEM),
+        hs.HopsInteger("depth", "depth", "depth", access = hs.HopsParamAccess.ITEM),
+        hs.HopsInteger("count", "count", "count", access = hs.HopsParamAccess.ITEM)
+        ],
+    outputs = [
+        hs.HopsNumber("arrList1", "arrList1", "arrList1", access = hs.HopsParamAccess.LIST)
+        ]
+)
+def ndarray_newaxis_01c(rows: int, columns: int, depth: int, count: int):
+    arr = rng.standard_normal((rows, columns, depth))
+    arr_3d = arr[:, np.newaxis, :]
+    print(arr_3d.shape)
+    arr_1d = np.random.normal(size=count)
+    print(arr_1d[:, np.newaxis])
+    print(arr_1d[np.newaxis, :])
+    return arr_1d[np.newaxis, :].tolist()[0]
+
+#if we had a 3D array and wanted to demean axis 2, we would need to insert a new axis
+#at position 2
+#example
+arr = rng.standard_normal((3, 4, 5))
+depth_means = arr.mean(2)
+print(depth_means)
+depth_means.shape
+demeaned = arr - depth_means[:, :, np.newaxis]
+print(demeaned.mean(2))
+
+#write this into a @hops component
+@hops.component(
+    "/ndarray_newaxis_02c",
+    name="ndarray_newaxis",
+    nickname="ndarray_newaxis",
+    description="ndarray_newaxis",
+    inputs = [
+        hs.HopsInteger("rows", "rows", "rows", access = hs.HopsParamAccess.ITEM),
+        hs.HopsInteger("columns", "columns", "columns", access = hs.HopsParamAccess.ITEM),
+        hs.HopsInteger("depth", "depth", "depth", access = hs.HopsParamAccess.ITEM),
+        hs.HopsInteger("count", "count", "count", access = hs.HopsParamAccess.ITEM)
+        ],
+    outputs = [
+        hs.HopsString("arrList1", "arrList1", "arrList1", access = hs.HopsParamAccess.LIST),
+        hs.HopsString("arrList2", "arrList2", "arrList2", access = hs.HopsParamAccess.LIST),
+        hs.HopsString("arrList3", "arrList3", "arrList3", access = hs.HopsParamAccess.LIST)
+        ]
+)
+def ndarray_newaxis_02c(rows: int, columns: int, depth: int, count: int):
+    arr = rng.standard_normal((rows, columns, depth))
+    depth_means = arr.mean(2)
+    print(depth_means)
+    print(depth_means.shape)
+    demeaned = arr - depth_means[:, :, np.newaxis]
+    print(demeaned.mean(2))
+    return depth_means.tolist(), demeaned.tolist(), demeaned.mean(2).tolist()
+
+#write this into a @hops component
+@hops.component(
+    "/ndarray_newaxis_02e",
+    name="ndarray_newaxis",
+    nickname="ndarray_newaxis",
+    description="ndarray_newaxis",
+    inputs = [
+        hs.HopsInteger("rows", "rows", "rows", access = hs.HopsParamAccess.ITEM),
+        hs.HopsInteger("columns", "columns", "columns", access = hs.HopsParamAccess.ITEM),
+        hs.HopsInteger("depth", "depth", "depth", access = hs.HopsParamAccess.ITEM),
+        hs.HopsInteger("count", "count", "count", access = hs.HopsParamAccess.ITEM)
+        ],
+    outputs = [
+        hs.HopsNumber("arrList1", "arrList1", "arrList1", access = hs.HopsParamAccess.LIST),
+        hs.HopsNumber("arrList2", "arrList2", "arrList2", access = hs.HopsParamAccess.LIST),
+        hs.HopsNumber("arrList3", "arrList3", "arrList3", access = hs.HopsParamAccess.LIST),
+        hs.HopsNumber("arrList4", "arrList4", "arrList4", access = hs.HopsParamAccess.LIST),
+        hs.HopsNumber("arrList5", "arrList5", "arrList5", access = hs.HopsParamAccess.LIST),
+        hs.HopsNumber("arrList6", "arrList6", "arrList6", access = hs.HopsParamAccess.LIST),
+        hs.HopsNumber("arrList7", "arrList7", "arrList7", access = hs.HopsParamAccess.LIST),
+        hs.HopsNumber("arrList8", "arrList8", "arrList8", access = hs.HopsParamAccess.LIST)
+        ]
+)
+def ndarray_newaxis_02e(rows: int, columns: int, depth: int, count: int):
+    arr = rng.standard_normal((rows, columns, depth))
+    depth_means = arr.mean(2)
+    print(depth_means)
+    print(depth_means.shape)
+    demeaned = arr - depth_means[:, :, np.newaxis]
+    print(demeaned)
+    print(demeaned.mean(2))
+    return demeaned.tolist()[0][0], demeaned.tolist()[0][1], demeaned.tolist()[1][0], demeaned.tolist()[1][1], demeaned.tolist()[2][0], demeaned.tolist()[2][1], demeaned.tolist()[3][0], demeaned.tolist()[3][1]
+
+#you might want to generalize demeaning over an axis without sacrificing performance
+#you can do this by writing some indexing gymnastics
+#example 
+arr = rng.standard_normal((3, 4, 5))
+row_means = arr.mean(1)
+print(row_means)
+print(row_means.shape)
+demeaned = arr - row_means[:, np.newaxis, :]
+print(demeaned.mean(1))
+
+#example
+def demean_axis(arr, axis=0):
+    means = arr.mean(axis)
+
+    #this generalized things like [:, :, np.newaxis] to work across any number of dimensions
+    #the tuple (slice(None),) is equivalent to [:]
+    #the tuple (slice(None), np.newaxis) is equivalent to [:, np.newaxis]
+    #the tuple (slice(None), np.newaxis, :, np.newaxis) is equivalent to [:, np.newaxis, :, np.newaxis]
+    #and so on
+    indexer = [slice(None)] * arr.ndim
+    indexer[axis] = np.newaxis
+    return arr - means[indexer]
+
+#Setting Array Values by Broadcasting
+#you can use broadcasting to set multiple values in a regular fashion
+#indexing with slices and integers always creates a view of the original array
+#this is a nice feature as it means that you can modify the view and the original array
+#will be modified as well
+#example
+arr = np.zeros((4, 3))
+arr[:] = 5
+print(arr)
+
+#write this into a @hops component
+@hops.component(
+    "/ndarray_broadcasting_03",
+    name="ndarray_broadcasting",
+    nickname="ndarray_broadcasting",
+    description="ndarray_broadcasting",
+    inputs = [
+        hs.HopsInteger("rows", "rows", "rows", access = hs.HopsParamAccess.ITEM),
+        hs.HopsInteger("columns", "columns", "columns", access = hs.HopsParamAccess.ITEM),
+        hs.HopsInteger("value", "value", "value", access = hs.HopsParamAccess.ITEM)
+        ],
+    outputs = [
+        hs.HopsNumber("arrList1", "arrList1", "arrList1", access = hs.HopsParamAccess.LIST),
+        hs.HopsNumber("arrList2", "arrList2", "arrList2", access = hs.HopsParamAccess.LIST),
+        hs.HopsNumber("arrList3", "arrList3", "arrList3", access = hs.HopsParamAccess.LIST),
+        hs.HopsNumber("arrList4", "arrList4", "arrList4", access = hs.HopsParamAccess.LIST)
+        ]
+)
+def ndarray_broadcasting_03(rows: int, columns: int, value: int):
+    arr = np.zeros((rows, columns))
+    arr[:] = value
+    print(arr)
+    return arr.tolist()[0], arr.tolist()[1], arr.tolist()[2], arr.tolist()[3]
+
+#however if we had a 1D array of values we wanted to set into the columns of the array
+#we can do it like this so long as the shape is compatible
+#example
+col = np.array([1.28, -0.42, 0.44, 1.6])
+arr[:] = col[:, np.newaxis]
+print(arr)
+
+#set up until the first two columns
+arr[:2] = [[-1.37], [0.509]]
+print(arr)
+
+#write this into a @hops component
+@hops.component(
+    "/ndarray_broadcasting_04",
+    name="ndarray_broadcasting",
+    nickname="ndarray_broadcasting",
+    description="ndarray_broadcasting",
+    inputs = [
+        hs.HopsInteger("rows", "rows", "rows", access = hs.HopsParamAccess.ITEM),
+        hs.HopsInteger("columns", "columns", "columns", access = hs.HopsParamAccess.ITEM),
+        hs.HopsInteger("value1", "value1", "value1", access = hs.HopsParamAccess.ITEM),
+        hs.HopsInteger("value2", "value2", "value2", access = hs.HopsParamAccess.ITEM),
+        hs.HopsInteger("value3", "value3", "value3", access = hs.HopsParamAccess.ITEM),
+        hs.HopsInteger("value4", "value4", "value4", access = hs.HopsParamAccess.ITEM),
+        hs.HopsInteger("value5", "value5", "value5", access = hs.HopsParamAccess.ITEM)
+        ],
+    outputs = [
+        hs.HopsNumber("arrList1", "arrList1", "arrList1", access = hs.HopsParamAccess.LIST),
+        hs.HopsNumber("arrList2", "arrList2", "arrList2", access = hs.HopsParamAccess.LIST),
+        hs.HopsNumber("arrList3", "arrList3", "arrList3", access = hs.HopsParamAccess.LIST),
+        hs.HopsNumber("arrList4", "arrList4", "arrList4", access = hs.HopsParamAccess.LIST)
+        ]
+)
+def ndarray_broadcasting_04(rows: int, columns: int, value1: int, value2: int, value3: int, value4: int, value5: int):
+    arr = np.zeros((rows, columns))
+    arr[:] = value1
+    print(arr)
+    col = np.array([value2, value3, value4, value5])
+    arr[:] = col[:, np.newaxis]
+    print(arr)
+    return arr.tolist()[0], arr.tolist()[1], arr.tolist()[2], arr.tolist()[3]
+
+#write this into a @hops component
+@hops.component(
+    "/ndarray_broadcasting_06",
+    name="ndarray_broadcasting",
+    nickname="ndarray_broadcasting",
+    description="ndarray_broadcasting",
+    inputs = [
+        hs.HopsInteger("rows", "rows", "rows", access = hs.HopsParamAccess.ITEM),
+        hs.HopsInteger("columns", "columns", "columns", access = hs.HopsParamAccess.ITEM),
+        hs.HopsInteger("value1", "value1", "value1", access = hs.HopsParamAccess.ITEM),
+        hs.HopsInteger("value2", "value2", "value2", access = hs.HopsParamAccess.ITEM),
+        hs.HopsInteger("value3", "value3", "value3", access = hs.HopsParamAccess.ITEM),
+        hs.HopsInteger("index1", "index1", "index1", access = hs.HopsParamAccess.ITEM)
+        ],
+    outputs = [
+        hs.HopsNumber("arrList1", "arrList1", "arrList1", access = hs.HopsParamAccess.LIST),
+        hs.HopsNumber("arrList2", "arrList2", "arrList2", access = hs.HopsParamAccess.LIST),
+        hs.HopsNumber("arrList3", "arrList3", "arrList3", access = hs.HopsParamAccess.LIST),
+        hs.HopsNumber("arrList4", "arrList4", "arrList4", access = hs.HopsParamAccess.LIST)
+        ]
+)
+def ndarray_broadcasting_06(rows: int, columns: int, value1: int, value2: int, value3: int, index1: int):
+    arr = np.zeros((rows, columns))
+    arr[:] = value1
+    print(arr)
+    arr[:index1] = [[value2], [value3]]
+    print(arr)
+    return arr.tolist()[0], arr.tolist()[1], arr.tolist()[2], arr.tolist()[3]
+
+#Advanced ufunc Usage
+#some ufuncs can be used in a more advanced fashion
+#to help you write more concise code
+#and avoid for loops
+
+#ufunc Instance Methods
+#NumPy's ufuncs have a number of useful methods that can be used to perform operations
+#accumulate: performs a binary reduce operation on all elements in the array
+#at(x, indices, b=None): performs an in-place application of the binary operation at the specified indices
+#reduce(x, axis=0, dtype=None, out=None, keepdims=False): performs a reduce operation on the array
+#reduceat(x, indices, axis=0, dtype=None, out=None): performs a reduce operation on all elements in the array grouped by the indices
+#outer(a, b, out=None): performs a vectorized cross product between a and b
+
+#reduce takes a single array and aggregates its values successively along an axis
+#optionally along a different axis by performing a binary operation
+#an alternative way to sum an array's values is to use the reduce method
+#np.add.reduce is equivalent to np.sum
+#example
+arr = np.arange(10)
+print(np.add.reduce(arr))
+print(arr.sum())
+
+#write this into a @hops component
+@hops.component(
+    "/ndarray_reduce_02",
+    name="ndarray_reduce",
+    nickname="ndarray_reduce",
+    description="ndarray_reduce",
+    inputs = [
+        hs.HopsNumber("count", "count", "count", access = hs.HopsParamAccess.ITEM)
+        ],
+    outputs = [
+        hs.HopsNumber("arrList1", "arrList1", "arrList1", access = hs.HopsParamAccess.ITEM)
+        ]
+)
+def ndarray_reduce_02(count: int):
+    arr = np.arange(count)
+    print(np.add.reduce(arr))
+    print(arr.sum())
+    return arr.sum()
+
+#use the np.logical_and to check whether the values in each row of a 2d array are sorted
+#example
+my_rng = np.random.default_rng(12346) #for reproducibility
+arr = my_rng.standard_normal((5, 5))
+print(arr)
+print(arr[::2].sort(1)) #sort a few rows
+print(arr[:, :-1] < arr[:, 1:]) #check whether rows are sorted
+print(np.logical_and.reduce(arr[:, :-1] < arr[:, 1:], axis=1)) #check whether rows are sorted
+#note that logical_and.reduce is equivalent to all method
+
+#write this into a @hops component
+@hops.component(
+    "/ndarray_reduce_12",
+    name="ndarray_reduce",
+    nickname="ndarray_reduce",
+    description="ndarray_reduce",   
+    inputs = [  
+        hs.HopsInteger("rows", "rows", "rows", access = hs.HopsParamAccess.ITEM),
+        hs.HopsInteger("columns", "columns", "columns", access = hs.HopsParamAccess.ITEM)
+        ],
+    outputs = [
+        hs.HopsBoolean("arrList1", "arrList1", "arrList1", access = hs.HopsParamAccess.LIST)
+        ]
+)
+def ndarray_reduce_12(rows: int, columns: int):
+    arr = rng.standard_normal((rows, columns))
+    print(arr)
+    print(arr[::2].sort(1))
+    print(arr[:, :-1] < arr[:, 1:])
+    print(np.logical_and.reduce(arr[:, :-1] < arr[:, 1:], axis=1))  
+    return np.logical_and.reduce(arr[:, :-1] < arr[:, 1:], axis=1).tolist()
+
+#accumulate performs a binary operation on all elements in the array
+#like cumsum is related to sum, accumulate is related to reduce
+#accumulate is equivalent to calling reduce with keepdims=True
+#example
+arr = np.arange(15).reshape((3, 5))
+print(np.add.accumulate(arr, axis=1))
+
+#write this into a @hops component
+@hops.component(
+    "/ndarray_accumulate_01",
+    name="ndarray_accumulate",
+    nickname="ndarray_accumulate",
+    description="ndarray_accumulate",
+    inputs = [
+        hs.HopsInteger("rows", "rows", "rows", access = hs.HopsParamAccess.ITEM),
+        hs.HopsInteger("columns", "columns", "columns", access = hs.HopsParamAccess.ITEM)
+        ],
+    outputs = [
+        hs.HopsNumber("arrList1", "arrList1", "arrList1", access = hs.HopsParamAccess.LIST),
+        hs.HopsNumber("arrList2", "arrList2", "arrList2", access = hs.HopsParamAccess.LIST),
+        hs.HopsNumber("arrList3", "arrList3", "arrList3", access = hs.HopsParamAccess.LIST)
+        ]
+)
+def ndarray_accumulate_01(rows: int, columns: int):
+    arr = rng.standard_normal((rows, columns))
+    print(np.add.accumulate(arr, axis=1))
+    return np.add.accumulate(arr, axis=1).tolist()[0], np.add.accumulate(arr, axis=1).tolist()[1], np.add.accumulate(arr, axis=1).tolist()[2]
+
+
+
+#outer performs a vectorized cross product between two arrays
+#example
+arr = np.arange(3).repeat([1, 2, 2])
+print(arr)
+print(np.multiply.outer(arr, np.arange(5)))
+
+#write this into a @hops component
+@hops.component(
+    "/ndarray_outer_01",
+    name="ndarray_outer",
+    nickname="ndarray_outer",
+    description="ndarray_outer",
+    inputs = [
+        hs.HopsInteger("count", "count", "count", access = hs.HopsParamAccess.ITEM)
+        ],
+    outputs = [
+        hs.HopsNumber("arrList1", "arrList1", "arrList1", access = hs.HopsParamAccess.LIST),
+        hs.HopsNumber("arrList2", "arrList2", "arrList2", access = hs.HopsParamAccess.LIST),
+        hs.HopsNumber("arrList3", "arrList3", "arrList3", access = hs.HopsParamAccess.LIST),
+        hs.HopsNumber("arrList4", "arrList4", "arrList4", access = hs.HopsParamAccess.LIST),
+        hs.HopsNumber("arrList5", "arrList5", "arrList5", access = hs.HopsParamAccess.LIST)
+        ]
+)
+def ndarray_outer_01(count: int):
+    arr = np.arange(count).repeat([1, 2, 2])
+    print(arr)
+    print(np.multiply.outer(arr, np.arange(5)))
+    return np.multiply.outer(arr, np.arange(5)).tolist()[0], np.multiply.outer(arr, np.arange(5)).tolist()[1], np.multiply.outer(arr, np.arange(5)).tolist()[2], np.multiply.outer(arr, np.arange(5)).tolist()[3], np.multiply.outer(arr, np.arange(5)).tolist()[4]
+
+#the output of the outer will have a dimension that is the concatenation of the dimensions of the inputs
+#example
+x, y = rng.standard_normal((3, 4)), rng.standard_normal(5)
+result = np.subtract.outer(x, y)
+print(result.shape)
+
+#write this into a @hops component
+@hops.component(
+    "/ndarray_outer_03",
+    name="ndarray_outer",
+    nickname="ndarray_outer",
+    description="ndarray_outer",
+    inputs = [
+        hs.HopsInteger("rows", "rows", "rows", access = hs.HopsParamAccess.ITEM),
+        hs.HopsInteger("columns", "columns", "columns", access = hs.HopsParamAccess.ITEM),
+        hs.HopsInteger("count", "count", "count", access = hs.HopsParamAccess.ITEM)
+        ],
+    outputs = [
+        hs.HopsNumber("arrList1", "arrList1", "arrList1", access = hs.HopsParamAccess.LIST),
+        hs.HopsString("shape", "shape", "shape", access = hs.HopsParamAccess.ITEM)
+        ]
+)
+def ndarray_outer_03(rows: int, columns: int, count: int):
+    x, y = rng.standard_normal((rows, columns)), rng.standard_normal(count)
+    result = np.subtract.outer(x, y)
+    print(result.shape)
+    return result.tolist()[0][0], result.shape
+
+#reduceat performs a reduce operation on all elements in the array grouped by the indices
+#slices are agragate together
+#it accepts a sequence of "bins" that indicate how to split the values
+#bin edges are inclusive on the left and exclusive on the right
+#example
+arr = np.arange(10)
+print(np.add.reduceat(arr, [0, 5, 8]))
+#the results are equivalent to calling reduce with the slices, arr[:5], arr[5:8], arr[8:]
+
+#write this into a @hops component
+@hops.component(
+    "/ndarray_reduceat_01",
+    name="ndarray_reduceat",
+    nickname="ndarray_reduceat",
+    description="ndarray_reduceat",
+    inputs = [
+        hs.HopsInteger("count", "count", "count", access = hs.HopsParamAccess.ITEM),
+        hs.HopsInteger("index1", "index1", "index1", access = hs.HopsParamAccess.ITEM),
+        hs.HopsInteger("index2", "index2", "index2", access = hs.HopsParamAccess.ITEM),
+        hs.HopsInteger("index3", "index3", "index3", access = hs.HopsParamAccess.ITEM)
+        ],
+    outputs = [
+        hs.HopsNumber("arrList1", "arrList1", "arrList1", access = hs.HopsParamAccess.ITEM),
+        hs.HopsNumber("arrList2", "arrList2", "arrList2", access = hs.HopsParamAccess.ITEM),
+        hs.HopsNumber("arrList3", "arrList3", "arrList3", access = hs.HopsParamAccess.ITEM)
+        ]
+)
+def ndarray_reduceat_01(count: int, index1: int, index2: int, index3: int):
+    arr = np.arange(count)
+    print(np.add.reduceat(arr, [index1, index2, index3]))
+    return np.add.reduceat(arr, [index1, index2, index3]).tolist()[0], np.add.reduceat(arr, [index1, index2, index3]).tolist()[1], np.add.reduceat(arr, [index1, index2, index3]).tolist()[2]
+
+#you can also pass a second argument to reduceat to specify the axis
+#example
+arr = np.multiply.outer(np.arange(4), np.arange(5))
+print(arr)
+print(np.add.reduceat(arr, [0, 2, 4], axis=1))
+
+#write this into a @hops component
+@hops.component(
+    "/ndarray_reduceat_03",
+    name="ndarray_reduceat",
+    nickname="ndarray_reduceat",
+    description="ndarray_reduceat",
+    inputs = [
+        hs.HopsInteger("rows", "rows", "rows", access = hs.HopsParamAccess.ITEM),
+        hs.HopsInteger("columns", "columns", "columns", access = hs.HopsParamAccess.ITEM),
+        hs.HopsInteger("index1", "index1", "index1", access = hs.HopsParamAccess.ITEM),
+        hs.HopsInteger("index2", "index2", "index2", access = hs.HopsParamAccess.ITEM),
+        hs.HopsInteger("index3", "index3", "index3", access = hs.HopsParamAccess.ITEM),
+        hs.HopsInteger("axis", "axis", "axis", access = hs.HopsParamAccess.ITEM)
+        ],
+    outputs = [
+        hs.HopsNumber("arrList1", "arrList1", "arrList1", access = hs.HopsParamAccess.LIST),
+        hs.HopsNumber("arrList2", "arrList2", "arrList2", access = hs.HopsParamAccess.LIST),
+        hs.HopsNumber("arrList3", "arrList3", "arrList3", access = hs.HopsParamAccess.LIST),
+        hs.HopsNumber("arrList4", "arrList4", "arrList4", access = hs.HopsParamAccess.LIST)
+        ]
+)
+def ndarray_reduceat_03(rows: int, columns: int, index1: int, index2: int, index3: int, axis: int):
+    arr = np.multiply.outer(np.arange(rows), np.arange(columns))
+    print(arr)
+    print(np.add.reduceat(arr, [index1, index2, index3], axis=axis))
+    return np.add.reduceat(arr, [index1, index2, index3], axis=axis).tolist()[0], np.add.reduceat(arr, [index1, index2, index3], axis=axis).tolist()[1], np.add.reduceat(arr, [index1, index2, index3], axis=axis).tolist()[2], np.add.reduceat(arr, [index1, index2, index3], axis=axis).tolist()[3]
+
+#writing new ufuncs in Python
+#NumPy provides a mechanism for creating your own ufuncs in Python
+#use NumPy C API to write a ufunc in C
+#use NumPy's ufunc machinery to create a ufunc in Python
+#the second option is easier and sufficient for most purposes
+
+#numpy.frompyfunc accepts a Python function along with the number of input and output arguments
+#and returns a NumPy ufunc
+#example
+def add_elements(x, y):
+    return x + y
+
+add_them = np.frompyfunc(add_elements, 2, 1)
+print(add_them(np.arange(8), np.arange(8))) #returns array([0, 2, 4, 6, 8, 10, 12, 14], dtype=object)
+
+#write this into a @hops component
+@hops.component(
+    "/ndarray_frompyfunc_01",
+    name="ndarray_frompyfunc",
+    nickname="ndarray_frompyfunc",
+    description="ndarray_frompyfunc",
+    inputs = [
+        hs.HopsInteger("count", "count", "count", access = hs.HopsParamAccess.ITEM)
+        ],
+    outputs = [
+        hs.HopsString("arrList1", "arrList1", "arrList1", access = hs.HopsParamAccess.LIST)
+        ]
+)
+def ndarray_frompyfunc_01(count: int):
+    add_them = np.frompyfunc(add_elements, 2, 1)
+    print(add_them(np.arange(count), np.arange(count)))
+    return add_them(np.arange(count), np.arange(count)).tolist()
+
+
+#these always return Python objects rather than NumPy arrays
+#you can convert the output to an array with astype
+# or use the np.vectorize decorator, that allows your to specify the output type
+#example
+add_them = np.vectorize(add_elements, otypes=[np.float64])
+print(add_them(np.arange(8), np.arange(8)))
+
+#these functions provide a way to create NumPy ufuncs in Python, but they are slow 
+#which is much slower that the numpy C-based ufuncs loops
+#you should only use them for low-performance applications
+#or when there is no other option
+
+arr = rng.standard_normal((10000))
+#run in IPython
+"""
+%timeit add_them(arr, arr) #returns 1000 loops, best of 3: 1.02 ms per loop
+%timeit np.add(arr, arr) #returns 10000 loops, best of 3: 32.8 µs per loop
+"""
+
+#Structured and Record Arrays
+#NumPy allows you to create arrays of compound data types
+#Tabular data or other heterogeneous data can be represented
+#by structured arrays
+#a structured array is an array whose datatype is a composition of simpler datatypes
+#a struct in C or a record in Pascal or a DataFrame in pandas or a table in SQL or a dict in Python
+#or a Series in pandas or a list in Python or a tuple in Python or a namedtuple in Python
+#example
+dtype = [('x', np.float64), ('y', np.int32)]
+sarr = np.array([(1.5, 6), (np.pi, -2)], dtype=dtype)
+print(sarr) #returns array([(1.5, 6), (3.141592653589793, -2)], dtype=[('x', '<f8'), ('y', '<i4')])
+#also returns (1.5, 6) (3.141592653589793, -2)
+
+#there are many ways to specify a structured dtype (see the online NumPy documentation)
+#one typical way is as a list of tuples with (field_name, field_data_type)
+#Now, the elements of the array are tuple-like objects and can be accessed by a dictionary-like syntax
+#example
+print(sarr[0]) #returns (1.5, 6)
+print(sarr[0]['y'])
+
+#write this into a @hops component
+@hops.component(
+    "/ndarray_structured_03",
+    name="ndarray_structured",
+    nickname="ndarray_structured",
+    description="ndarray_structured",
+    inputs = [
+        hs.HopsNumber("value1", "value1", "value1", access = hs.HopsParamAccess.ITEM),
+        hs.HopsInteger("value2", "value2", "value2", access = hs.HopsParamAccess.ITEM),
+        hs.HopsNumber("value3", "value3", "value3", access = hs.HopsParamAccess.ITEM),
+        hs.HopsInteger("value4", "value4", "value4", access = hs.HopsParamAccess.ITEM)
+        ],
+    outputs = [
+        hs.HopsString("arrList1", "arrList1", "arrList1", access = hs.HopsParamAccess.LIST),
+        hs.HopsString("arrList2", "arrList2", "arrList2", access = hs.HopsParamAccess.LIST),
+        hs.HopsString("arrList3", "arrList3", "arrList3", access = hs.HopsParamAccess.LIST)
+        ]
+)
+def ndarray_structured_03(value1: int, value2: int, value3: int, value4: int):
+    dtype = [('x', np.float64), ('y', np.int32)]
+    sarr = np.array([(value1, value2), (value3, value4)], dtype=dtype)
+    print(sarr) #returns array([(1.5, 6), (3.141592653589793, -2)], dtype=[('x', '<f8'), ('y', '<i4')])
+    print(sarr[0]) #returns (1.5, 6)
+    print(sarr[0]['y']) #returns 6
+    return sarr[0]['y'].tolist(), sarr[0]['x'].tolist(), sarr[1]['y'].tolist()
+
+#Nested dtypes and Multidimensional Fields
+#you can create a dtype where one of the fields is another structured dtype
+#example
+dtype = [('x', np.int64, 3), ('y', np.int32)]
+arr = np.zeros(4, dtype=dtype)
+print(arr) 
+#returns array([([0, 0, 0], 0), ([0, 0, 0], 0), ([0, 0, 0], 0), ([0, 0, 0], 0)], dtype=[('x', '<i8', (3,)), ('y', '<i4')])
+print(arr[0]['x']) #returns [0 0 0]
+print(arr['x']) #returns [[0 0 0] [0 0 0] [0 0 0] [0 0 0]]
+print(arr['y']) #returns [0 0 0 0]
+print(arr['y'][0]) #returns 0
+
+#write this into a @hops component
+@hops.component(
+    "/ndarray_structured_06",
+    name="ndarray_structured",
+    nickname="ndarray_structured",
+    description="ndarray_structured",
+    inputs = [
+        hs.HopsNumber("value1", "value1", "value1", access = hs.HopsParamAccess.ITEM)
+    ],
+    outputs = [
+        hs.HopsString("arrList1", "arrList1", "arrList1", access = hs.HopsParamAccess.LIST),
+        hs.HopsString("arrList2", "arrList2", "arrList2", access = hs.HopsParamAccess.LIST),
+        hs.HopsString("arrList3", "arrList3", "arrList3", access = hs.HopsParamAccess.LIST),
+        hs.HopsString("arrList4", "arrList4", "arrList4", access = hs.HopsParamAccess.LIST)
+        ]
+)
+def ndarray_structured_06(value1: int):
+    dtype = [('x', np.int64, 3), ('y', np.int32)]
+    arr = np.zeros(4, dtype=dtype)
+    print(arr) 
+    print(arr[0]['x']) 
+    print(arr['x']) 
+    print(arr['y']) 
+    print(arr['y'][0]) 
+    return arr[0]['x'].tolist(), arr['x'].tolist(), arr['y'].tolist(), arr['y'][0].tolist()
+
+#this allows you to express more complicated data sets, nested data structures, 
+# or multidimensional data as a single NumPy array
+#example
+dtype = [('x', [('a', 'f8'), ('b', 'f4')]), ('y', np.int32)]
+data = np.array([((1, 2), 5), ((3, 4), 6)], dtype=dtype)
+print(data['x']) #returns array[[(1., 1.) (2., 2.)] [(3., 3.) (4., 4.)]], dtype=[('a', '<f8'), ('b', '<f4')])
+print(data['y']) #returns array([5, 6], dtype=int32)
+print(data['x']['a']) #returns array([[1., 2.], [3., 4.]]), dtype=float64)  
+
+#write this into a @hops component
+@hops.component(
+    "/ndarray_structured_07",
+    name="ndarray_structured",
+    nickname="ndarray_structured",
+    description="ndarray_structured",
+    inputs = [
+        hs.HopsNumber("value1", "value1", "value1", access = hs.HopsParamAccess.ITEM)
+    ],
+    outputs = [
+        hs.HopsString("arrList1", "arrList1", "arrList1", access = hs.HopsParamAccess.LIST),
+        hs.HopsString("arrList2", "arrList2", "arrList2", access = hs.HopsParamAccess.LIST),
+        hs.HopsString("arrList3", "arrList3", "arrList3", access = hs.HopsParamAccess.LIST),
+        hs.HopsString("arrList4", "arrList4", "arrList4", access = hs.HopsParamAccess.LIST)
+        ]
+)
+def ndarray_structured_07(value1: int):
+    dtype = [('x', [('a', 'f8'), ('b', 'f4')]), ('y', np.int32)]
+    data = np.array([((1, 2), 5), ((3, 4), 6)], dtype=dtype)
+    print(data['x']) 
+    print(data['y']) 
+    print(data['x']['a']) 
+    return data['x']['a'].tolist(), data['x'].tolist(), data['y'].tolist(), data['y'][0].tolist()
+
+#why use structured arrays?
+#structured arrays are a way to represent compound data in NumPy
+#they are useful for interfacing with other libraries and systems
+#they are not as efficient as using a dictionary or a DataFrame
+#time to learn about pandas
+
+#More about Sorting
+#NumPy arrays can be sorted in-place using the sort method
+#example
+arr = np.random.randn(6)
+print(arr) #returns array([-0.2047, 0.4789, -0.5194, -0.5557, 1.9658, 1.3934])
+arr.sort() #returns array([-0.5557, -0.5194, -0.2047, 0.4789, 1.3934, 1.9658])
+print(arr)
+# if the array is a view on a larger array, the original array will be modified
+#example
+arr = np.random.randn(3, 5)
+print(arr) #returns array([[-0.2047, 0.4789, -0.5194, -0.5557, 1.9658], [1.3934, 0.0929, 0.2817, 0.769 , 1.2464], [1.0072, -1.2962, 0.275 , 0.2289, 1.3529]])
+arr[:, 0].sort() #returns array([-0.2047, 1.0072, 1.3934])
+print(arr) #returns array([[-0.2047, 0.4789, -0.5194, -0.5557, 1.9658], [1.0072, 0.0929, 0.2817, 0.769 , 1.2464], [1.3934, -1.2962, 0.275 , 0.2289, 1.3529]])
+
+#write this into a @hops component
+@hops.component(
+    "/ndarray_sort_05",
+    name="ndarray_sort",
+    nickname="ndarray_sort",
+    description="ndarray_sort",
+    inputs = [
+        hs.HopsInteger("rows", "rows", "rows", access = hs.HopsParamAccess.ITEM),
+        hs.HopsInteger("columns", "columns", "columns", access = hs.HopsParamAccess.ITEM)
+        ],
+    outputs = [
+        hs.HopsNumber("arrList1", "arrList1", "arrList1", access = hs.HopsParamAccess.LIST),
+        hs.HopsNumber("arrList2", "arrList2", "arrList2", access = hs.HopsParamAccess.LIST),
+        hs.HopsNumber("arrList3", "arrList3", "arrList3", access = hs.HopsParamAccess.LIST)
+        ]
+)
+def ndarray_sort_05(rows: int, columns: int):
+    arr = np.random.randn(rows, columns)
+    print(arr)
+    arr[:, 0].sort()
+    print(arr)
+    return arr[:, 0].tolist(), arr[:, 1].tolist(), arr[:, 2].tolist()
+
+#numpy.sort returns a sorted copy of an array instead of modifying the array in-place
+#example
+arr = np.random.randn(5)
+print(arr) #returns array([0.8864, -0.729 , 0.7452, 0.3906, 0.3557])
+print(np.sort(arr)) #returns array([-0.729 , 0.3557, 0.3906, 0.7452, 0.8864])
+print(arr) #returns array([0.8864, -0.729 , 0.7452, 0.3906, 0.3557])
+
+#write this into a @hops component
+@hops.component(
+    "/ndarray_sort_06",
+    name="ndarray_sort",
+    nickname="ndarray_sort",
+    description="ndarray_sort",
+    inputs = [
+        hs.HopsInteger("count", "count", "count", access = hs.HopsParamAccess.ITEM)
+        ],
+    outputs = [
+        hs.HopsNumber("arrList1", "arrList1", "arrList1", access = hs.HopsParamAccess.LIST),
+        hs.HopsNumber("arrList2", "arrList2", "arrList2", access = hs.HopsParamAccess.LIST)
+        ]
+)
+def ndarray_sort_06(count: int):
+    arr = np.random.randn(count)
+    print(arr)
+    print(np.sort(arr))
+    print(arr)
+    return np.sort(arr).tolist(), arr.tolist()
+
+#these take an optional axis argument to sort along a row or column
+#example
+arr = np.random.randn(3, 5)
+print(arr) #returns array([[-0.2047, 0.4789, -0.5194, -0.5557, 1.9658], [1.3934, 0.0929, 0.2817, 0.769 , 1.2464], [1.0072, -1.2962, 0.275 , 0.2289, 1.3529]])
+arr.sort(axis=1)
+print(arr) #returns array([[-0.5557, -0.5194, -0.2047, 0.4789, 1.9658], [0.0929, 0.2464, 0.2817, 0.769 , 1.3934], [-1.2962, 0.2289, 0.275 , 1.0072, 1.3529]])
+
+#write this into a @hops component
+@hops.component(
+    "/ndarray_sort_07",
+    name="ndarray_sort",
+    nickname="ndarray_sort",
+    description="ndarray_sort",
+    inputs = [
+        hs.HopsInteger("rows", "rows", "rows", access = hs.HopsParamAccess.ITEM),
+        hs.HopsInteger("columns", "columns", "columns", access = hs.HopsParamAccess.ITEM),
+        hs.HopsInteger("axis", "axis", "axis", access = hs.HopsParamAccess.ITEM)
+        ],
+    outputs = [
+        hs.HopsNumber("arrList1", "arrList1", "arrList1", access = hs.HopsParamAccess.LIST),
+        hs.HopsNumber("arrList2", "arrList2", "arrList2", access = hs.HopsParamAccess.LIST),
+        hs.HopsNumber("arrList3", "arrList3", "arrList3", access = hs.HopsParamAccess.LIST)
+        ]
+)
+def ndarray_sort_07(rows: int, columns: int, axis: int):
+    arr = np.random.randn(rows, columns)
+    print(arr)
+    arr.sort(axis=axis)
+    print(arr)
+    return arr[:, 0].tolist(), arr[:, 1].tolist(), arr[:, 2].tolist()
+
+#notice that the top row is sorted in ascending order
+#use "TRICK" to sort the top row in descending order
+#values[::-1] reverses the values
+#example
+arr = np.random.randn(3, 5)
+print(arr) #returns array([[-0.2047, 0.4789, -0.5194, -0.5557, 1.9658], [1.3934, 0.0929, 0.2817, 0.769 , 1.2464], [1.0072, -1.2962, 0.275 , 0.2289, 1.3529]])
+arr.sort(axis=1)
+print(arr) #returns array([[-0.5557, -0.5194, -0.2047, 0.4789, 1.9658], [0.0929, 0.2464, 0.2817, 0.769 , 1.3934], [-1.2962, 0.2289, 0.275 , 1.0072, 1.3529]])
+arr[:, ::-1] #returns array([[1.9658, 0.4789, -0.2047, -0.5194, -0.5557], [1.3934, 0.769 , 0.2817, 0.2464, 0.0929], [1.3529, 1.0072, 0.275 , 0.2289, -1.2962]])
+
+#write this into a @hops component
+@hops.component(
+    "/ndarray_sort_08",
+    name="ndarray_sort",
+    nickname="ndarray_sort",
+    description="ndarray_sort",
+    inputs = [
+        hs.HopsInteger("rows", "rows", "rows", access = hs.HopsParamAccess.ITEM),
+        hs.HopsInteger("columns", "columns", "columns", access = hs.HopsParamAccess.ITEM),
+        hs.HopsInteger("axis", "axis", "axis", access = hs.HopsParamAccess.ITEM)
+        ],
+    outputs = [
+        hs.HopsNumber("arrList1", "arrList1", "arrList1", access = hs.HopsParamAccess.LIST),
+        hs.HopsNumber("arrList2", "arrList2", "arrList2", access = hs.HopsParamAccess.LIST),
+        hs.HopsNumber("arrList3", "arrList3", "arrList3", access = hs.HopsParamAccess.LIST)
+        ]
+)
+def ndarray_sort_08(rows: int, columns: int, axis: int):
+    arr = np.random.randn(rows, columns)
+    print(arr)
+    arr.sort(axis=axis)
+    print(arr)
+    print(arr[:, ::-1])
+    return arr[:, ::-1].tolist()[0], arr[:, ::-1].tolist()[1], arr[:, ::-1].tolist()[2]
+
+#indirect sorts: argsort and lexsort
+#you may need to reorder datasets based on one or more keys
+#indexers that return integer indices are called indirect sorts
+#example
+values = np.array([5, 0, 1, 3, 2])
+indexer = values.argsort()
+print(indexer) #returns array([1, 2, 4, 3, 0])
+print(values[indexer]) #returns array([0, 1, 2, 3, 5])
+
+#write this into a @hops component
+@hops.component(
+    "/ndarray_argsort_01",
+    name="ndarray_argsort",
+    nickname="ndarray_argsort",
+    description="ndarray_argsort",
+    inputs = [
+        hs.HopsInteger("count", "count", "count", access = hs.HopsParamAccess.ITEM)
+    ],
+    outputs = [
+        hs.HopsString("arrList1", "arrList1", "arrList1", access = hs.HopsParamAccess.ITEM),
+        hs.HopsString("arrList2", "arrList2", "arrList2", access = hs.HopsParamAccess.ITEM)
+    ]
+)
+def ndarray_argsort_01(count: int):
+    values = np.random.randn(count)
+    indexer = values.argsort()
+    print(indexer)
+    print(values[indexer])
+    return indexer.tolist(), values[indexer].tolist()
+
+#you can also sort along a particular axis of a multidimensional array
+#example
+arr = np.random.randn(3, 5)
+print(arr) #returns array([[-0.2047, 0.4789, -0.5194, -0.5557, 1.9658], [1.3934, 0.0929, 0.2817, 0.769 , 1.2464], [1.0072, -1.2962, 0.275 , 0.2289, 1.3529]])
+arr[0] = values
+
+#write this into a @hops component
+@hops.component(
+    "/ndarray_argsort_03",
+    name="ndarray_argsort",
+    nickname="ndarray_argsort",
+    description="ndarray_argsort",
+    inputs = [
+        hs.HopsInteger("rows", "rows", "rows", access = hs.HopsParamAccess.ITEM),
+        hs.HopsInteger("columns", "columns", "columns", access = hs.HopsParamAccess.ITEM),
+    ],
+    outputs = [
+        hs.HopsString("arrList1", "arrList1", "arrList1", access = hs.HopsParamAccess.LIST),
+        hs.HopsString("arrList2", "arrList2", "arrList2", access = hs.HopsParamAccess.LIST),
+        hs.HopsString("arrList3", "arrList3", "arrList3", access = hs.HopsParamAccess.LIST)
+    ]
+)
+def ndarray_argsort_03(rows: int, columns: int):
+    arr = np.random.randn(rows, columns)
+    print(arr)
+    arr[0] = values
+    print(arr)
+    print(arr[:, arr[0].argsort()])
+    return arr[:, arr[0].argsort()].tolist()[0], arr[:, arr[0].argsort()].tolist()[1], arr[:, arr[0].argsort()].tolist()[2]
+
+#lexsort is a more general version of argsort that can perform indirect sorts 
+# on multiple key arrays
+#example
+first_name = np.array(['Bob', 'Jane', 'Steve', 'Bill', 'Barbara'])
+last_name = np.array(['Jones', 'Arnold', 'Arnold', 'Jones', 'Walters'])
+sorter = np.lexsort((first_name, last_name))
+print(sorter) #returns array([1, 2, 3, 0, 4])
+print(zip(last_name[sorter], first_name[sorter])) #returns <zip object at 0x7f8b1c0b6a00>
+
+#write this into a @hops component
+@hops.component(
+    "/ndarray_lexsort_02",
+    name="ndarray_lexsort",
+    nickname="ndarray_lexsort",
+    description="ndarray_lexsort",
+    inputs = [
+        hs.HopsString("value1", "value1", "value1", access = hs.HopsParamAccess.ITEM),
+        hs.HopsString("value2", "value2", "value2", access = hs.HopsParamAccess.ITEM),
+        hs.HopsString("value3", "value3", "value3", access = hs.HopsParamAccess.ITEM),
+        hs.HopsString("value4", "value4", "value4", access = hs.HopsParamAccess.ITEM),
+        hs.HopsString("value5", "value5", "value5", access = hs.HopsParamAccess.ITEM)
+    ],
+    outputs = [
+        hs.HopsString("arrList1", "arrList1", "arrList1", access = hs.HopsParamAccess.ITEM)
+    ]
+)
+def ndarray_lexsort_02(value1: str, value2: str, value3: str, value4: str, value5: str):
+    first_name = np.array([value1, value2, value3, value4, value5])
+    last_name = np.array(['Jones', 'Arnold', 'Arnold', 'Jones', 'Walters'])
+    sorter = np.lexsort((first_name, last_name))
+    print(sorter)
+    zippedList = list(zip(last_name[sorter], first_name[sorter]))
+    print(zip(last_name[sorter], first_name[sorter]))
+    return zippedList
+
+#Alternative Sort Algorithms
+#A stable sort preserves the relative position of elements with equal values
+#important where relative ordering is meaningful
+#example
+values = np.array(['2:first', '2:second', '1:first', '1:second', '1:third'])
+key = np.array([2, 2, 1, 1, 1])
+indexer = key.argsort(kind='mergesort')
+print(indexer) #returns array([2, 3, 4, 0, 1])
+values.take(indexer) #returns array(['1:first', '1:second', '1:third', '2:first', '2:second'], dtype='<U8')
+
+#write this into a @hops component
+@hops.component(
+    "/ndarray_argsort_04",
+    name="ndarray_argsort",
+    nickname="ndarray_argsort",
+    description="ndarray_argsort",
+    inputs = [
+        hs.HopsString("value1", "value1", "value1", access = hs.HopsParamAccess.ITEM),
+        hs.HopsString("value2", "value2", "value2", access = hs.HopsParamAccess.ITEM),
+        hs.HopsString("value3", "value3", "value3", access = hs.HopsParamAccess.ITEM),
+        hs.HopsString("value4", "value4", "value4", access = hs.HopsParamAccess.ITEM),
+        hs.HopsString("value5", "value5", "value5", access = hs.HopsParamAccess.ITEM)
+    ],
+    outputs = [
+        hs.HopsString("arrList1", "arrList1", "arrList1", access = hs.HopsParamAccess.ITEM)
+    ]
+)
+def ndarray_argsort_04(value1: str, value2: str, value3: str, value4: str, value5: str):
+    values = np.array([value1, value2, value3, value4, value5])
+    key = np.array([2, 2, 1, 1, 1])
+    indexer = key.argsort(kind='mergesort')
+    print(indexer)
+    print(values.take(indexer))
+    return values.take(indexer).tolist()
+
+#the only stable sorting algorithm is mergesort, which has 
+# a worst-case complexity of O(n log n)
+#the default quicksort algorithm is O(n log n) on average, but O(n^2) in the worst case
+
+#array sorting methods, speed, and stability, and work space, worst case
+#quicksort, O(n log n), no, O(n^2)
+#mergesort, O(n log n), yes, O(n log n)
+#heapsort, O(n log n), no, O(n log n)
+
+#Partially Sorting Arrays
+#numpy.partition takes an array and a number K
+#the result is a new array with the smallest K values to the left of the partition
+#and the remaining values to the right, in arbitrary order
+#example
+arr = np.array([7, 2, 3, 1, 6, 5, 4])
+print(arr) #returns array([7, 2, 3, 1, 6, 5, 4])
+print(np.partition(arr, 3)) #returns array([2, 1, 3, 4, 6, 5, 7])
+
+#write this into a @hops component
+@hops.component(
+    "/ndarray_partition_03",
+    name="ndarray_partition",
+    nickname="ndarray_partition",
+    description="ndarray_partition",
+    inputs = [
+        hs.HopsInteger("count", "count", "count", access = hs.HopsParamAccess.ITEM),
+        hs.HopsInteger("index1", "index1", "index1", access = hs.HopsParamAccess.ITEM)
+    ],
+    outputs = [
+        hs.HopsString("arrList1", "arrList1", "arrList1", access = hs.HopsParamAccess.ITEM)
+    ]
+)
+def ndarray_partition_03(count: int, index1: int):
+    rng = np.random.default_rng(12345)
+    arr = rng.standard_normal(count)
+    print(arr)
+    print(np.partition(arr, index1))
+    return np.partition(arr, index1).tolist()
+
+#numpy.argpartition is the indirect partition analogue of numpy.partition
+#example
+indices = np.argpartition(arr, 3)
+print(indices) #returns array([3, 1, 2, 6, 4, 5, 0])
+print(arr.take(indices)) #returns array([1, 2, 3, 4, 6, 5, 7])
+
+#write this into a @hops component
+@hops.component(
+    "/ndarray_argpartition_02",
+    name="ndarray_argpartition",
+    nickname="ndarray_argpartition",
+    description="ndarray_argpartition",
+    inputs = [
+        hs.HopsInteger("count", "count", "count", access = hs.HopsParamAccess.ITEM),
+        hs.HopsInteger("index1", "index1", "index1", access = hs.HopsParamAccess.ITEM)
+    ],
+    outputs = [
+        hs.HopsString("arrList1", "arrList1", "arrList1", access = hs.HopsParamAccess.ITEM)
+    ]
+)
+def ndarray_argpartition_02(count: int, index1: int):
+    rng = np.random.default_rng(12345)
+    arr = rng.standard_normal(count)
+    print(arr)
+    indices = np.argpartition(arr, index1)
+    print(indices)
+    print(arr.take(indices))
+    return arr.take(indices).tolist()
+
+#numpy.searchsorted is an array method that performs a binary search on a sorted array
+#returns the index at which a value would need to be inserted to maintain sortedness
+#example
+arr = np.array([0, 1, 7, 12, 15])
+print(arr) #returns array([0, 1, 7, 12, 15])
+print(arr.searchsorted(9)) #returns 3
+
+#write this into a @hops component
+@hops.component(
+    "/ndarray_searchsorted_01",
+    name="ndarray_searchsorted",
+    nickname="ndarray_searchsorted",
+    description="ndarray_searchsorted",
+    inputs = [
+        hs.HopsInteger("count", "count", "count", access = hs.HopsParamAccess.ITEM),
+        hs.HopsInteger("index1", "index1", "index1", access = hs.HopsParamAccess.ITEM)
+    ],
+    outputs = [
+        hs.HopsString("arrList1", "arrList1", "arrList1", access = hs.HopsParamAccess.ITEM)
+    ]
+)
+def ndarray_searchsorted_01(count: int, index1: int):
+    arr = np.random.randn(count)
+    print(arr)
+    print(arr.searchsorted(index1))
+    return arr.searchsorted(index1).tolist()
+
+#you can also pass in an array of values to be inserted
+#example
+arr = np.array([0, 1, 7, 12, 15])
+print(arr) #returns array([0, 1, 7, 12, 15])
+print(arr.searchsorted([0, 8, 11, 16])) #returns array([0, 3, 3, 5])
+
+#write this into a @hops component
+@hops.component(
+    "/ndarray_searchsorted_03",
+    name="ndarray_searchsorted",
+    nickname="ndarray_searchsorted",
+    description="ndarray_searchsorted",
+    inputs = [
+        hs.HopsInteger("list1", "list", "list", access = hs.HopsParamAccess.LIST),
+        hs.HopsInteger("index1", "index1", "index1", access = hs.HopsParamAccess.ITEM),
+        hs.HopsInteger("index2", "index2", "index2", access = hs.HopsParamAccess.ITEM),
+        hs.HopsInteger("index3", "index3", "index3", access = hs.HopsParamAccess.ITEM)
+    ],
+    outputs = [
+        hs.HopsString("arrList1", "arrList1", "arrList1", access = hs.HopsParamAccess.ITEM)
+    ]
+)
+def ndarray_searchsorted_03(list1: list, index1: int, index2: int, index3: int):
+    arr = np.array(list1)
+    print(arr)
+    print(arr.searchsorted([index1, index2, index3]))
+    return arr.searchsorted([index1, index2, index3]).tolist()
+
+#numpy.searchsorted has a side parameter that specifies whether to return
+# the leftmost index or rightmost index if the value is not found
+#example
+arr = np.array([0, 1, 7, 12, 15])
+print(arr) #returns array([0, 1, 7, 12, 15])
+print(arr.searchsorted(9)) #returns 3
+print(arr.searchsorted(9, side='right')) #returns 3
+print(arr.searchsorted([0, 8, 11, 16])) #returns array([0, 3, 3, 5])
+print(arr.searchsorted([0, 8, 11, 16], side='right')) #returns array([1, 3, 3, 5])
+
+#write this into a @hops component
+@hops.component(
+    "/ndarray_searchsorted_04",
+    name="ndarray_searchsorted",
+    nickname="ndarray_searchsorted",
+    description="ndarray_searchsorted",
+    inputs = [
+        hs.HopsInteger("list1", "list", "list", access = hs.HopsParamAccess.LIST),
+        hs.HopsInteger("index1", "index1", "index1", access = hs.HopsParamAccess.ITEM),
+        hs.HopsInteger("index2", "index2", "index2", access = hs.HopsParamAccess.ITEM),
+        hs.HopsInteger("index3", "index3", "index3", access = hs.HopsParamAccess.ITEM)
+    ],
+    outputs = [
+        hs.HopsString("arrList1", "arrList1", "arrList1", access = hs.HopsParamAccess.ITEM)
+    ]
+)
+def ndarray_searchsorted_04(list1: list, index1: int, index2: int, index3: int):
+    arr = np.array(list1)
+    print(arr)
+    print(arr.searchsorted([index1, index2, index3], side='right'))
+    return arr.searchsorted([index1, index2, index3], side='right').tolist()
+
+#numpy.searchsorted is useful for implementing search algorithms
+#example
+data = np.floor(np.random.uniform(0, 10000, size=50))
+bins = np.array([0, 100, 1000, 5000, 10000])
+print(data) 
+#to get a label for each data point, where I would mean the bucket [0, 100)) 
+labels = bins.searchsorted(data)
+print(labels) 
+#combined with groupby, this can be used to perform a very fast bucket analysis
+import pandas as pd
+print(pd.Series(data).groupby(labels).mean()) #returns 1    50.0000 2    550.0000 3    2750.0000 4    7500.0000 dtype: float64
+
+#write this into a @hops component  
+@hops.component(
+    "/ndarray_searchsorted_05",
+    name="ndarray_searchsorted",
+    nickname="ndarray_searchsorted",
+    description="ndarray_searchsorted",
+    inputs = [
+        hs.HopsInteger("count", "count", "count", access = hs.HopsParamAccess.ITEM),
+        hs.HopsInteger("index1", "index1", "index1", access = hs.HopsParamAccess.ITEM),
+        hs.HopsInteger("index2", "index2", "index2", access = hs.HopsParamAccess.ITEM),
+        hs.HopsInteger("index3", "index3", "index3", access = hs.HopsParamAccess.ITEM),
+        hs.HopsInteger("index4", "index4", "index4", access = hs.HopsParamAccess.ITEM),
+        hs.HopsInteger("index5", "index5", "index5", access = hs.HopsParamAccess.ITEM)
+    ],
+    outputs = [
+        hs.HopsString("arrList1", "arrList1", "arrList1", access = hs.HopsParamAccess.ITEM)
+    ]
+)
+def ndarray_searchsorted_05(count: int, index1: int, index2: int, index3: int, index4: int, index5: int):
+    data = np.floor(np.random.uniform(0, 10000, size=count))
+    bins = np.array([index1, index2, index3, index4, index5])
+    print(data)
+    labels = bins.searchsorted(data)
+    print(labels)
+    print(pd.Series(data).groupby(labels).mean())
+    return pd.Series(data).groupby(labels).mean().tolist()
+
+"""
+███╗   ██╗██╗   ██╗███╗   ███╗██████╗  █████╗ 
+████╗  ██║██║   ██║████╗ ████║██╔══██╗██╔══██╗
+██╔██╗ ██║██║   ██║██╔████╔██║██████╔╝███████║
+██║╚██╗██║██║   ██║██║╚██╔╝██║██╔══██╗██╔══██║
+██║ ╚████║╚██████╔╝██║ ╚═╝ ██║██████╔╝██║  ██║
+╚═╝  ╚═══╝ ╚═════╝ ╚═╝     ╚═╝╚═════╝ ╚═╝  ╚═╝
+"""
+
+'''
+#Writing Fast NumPy Functions with Numba
+#Numba is a just-in-time compiler for Python that works best 
+# on code that uses NumPy arrays
+#https://numba.pydata.org/
+#uses CPU and GPU
+#uses LLVM compiler infrastructure project, https://llvm.org/
+#to translate Python functions into compiled code based on the NumPy array types
+#example
+import numpy as np
+def mean_distance(x, y):
+    nx = len(x)
+    sum = 0.0
+    for i in range(nx):
+        result = x[i] - y[i]
+        sum += result
+    return sum / nx
+x = rng.standard_normal(10000000)
+y = rng.standard_normal(10000000)
+#%timeit mean_distance(x, y) 
+#returns 1.2 s ± 8.21 ms per loop (mean ± std. dev. of 7 runs, 1 loop each)
+
+#NumPy version is much faster
+#%timeit (x - y).mean() 
+#returns 5.5 ms ± 21.2 µs per loop (mean ± std. dev. of 7 runs, 100 loops each)
+
+#we can turn the function into a Numba function
+import numba as nb
+#numba_mean_distance = nb.jit(mean_distance)
+#%timeit numba_mean_distance(x, y)
+#returns 1.2 s ± 8.21 ms per loop (mean ± std. dev. of 7 runs, 1 loop each)
+
+#we could also have this as a decorator
+@nb.jit
+def numba_mean_distance(x, y):
+    nx = len(x)
+    sum = 0.0
+    for i in range(nx):
+        result = x[i] - y[i]
+        sum += result
+    return sum / nx
+
+#%timeit numba_mean_distance(x, y)
+#returns 1.2 s ± 8.21 ms per loop (mean ± std. dev. of 7 runs, 1 loop each)
+
+#we could have written
+from numba import float64, njit
+@njit(float64(float64[:], float64[:]))
+def numba_mean_distance(x, y):
+    return (x - y).mean() #returns 5.5 ms ± 21.2 µs per loop (mean ± std. dev. of 7 runs, 100 loops each)
+
+#write this into a @hops component
+@hops.component(
+    "/ndarray_numba_01",
+    name="ndarray_numba",
+    nickname="ndarray_numba",
+    description="ndarray_numba",
+    inputs = [
+        hs.HopsInteger("count", "count", "count", access = hs.HopsParamAccess.ITEM)
+    ],
+    outputs = [
+        hs.HopsString("arrList1", "arrList1", "arrList1", access = hs.HopsParamAccess.ITEM)
+    ]
+)
+def ndarray_numba_01(count: int):
+    rng = np.random.default_rng(12345)
+    x = rng.standard_normal(count)
+    y = rng.standard_normal(count)
+    print(x)
+    print(y)
+    return (x - y).mean().tolist()
+
+#numba.vectorize decorator creates a NumPy universal function (ufunc)
+#that can be used on arrays of any size or dimensionality
+#example
+import numba as nb
+@nb.vectorize
+def nb_add(x, y):
+    return x + y
+x = np.arange(10)
+print(nb_add(x, x)) #returns array([ 0, 2, 4, 6, 8, 10, 12, 14, 16, 18])    
+
+#write this into a @hops component
+@hops.component(
+    "/ndarray_numba_02",
+    name="ndarray_numba",
+    nickname="ndarray_numba",
+    description="ndarray_numba",
+    inputs = [
+        hs.HopsInteger("count", "count", "count", access = hs.HopsParamAccess.ITEM)
+    ],
+    outputs = [
+        hs.HopsString("arrList1", "arrList1", "arrList1", access = hs.HopsParamAccess.ITEM)
+    ]
+)
+def ndarray_numba_02(count: int):
+    rng = np.random.default_rng(12345)
+    x = rng.standard_normal(count)
+    print(x)
+    print(nb_add(x, x))
+    return nb_add(x, x).tolist()
+'''
+#Advanced Array Input and Output
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 if __name__ == "__main__":
     app.run(debug=True)
